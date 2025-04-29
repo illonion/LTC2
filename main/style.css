@@ -71,7 +71,8 @@
     height: 12px;
     border-radius: 50%;
 }
-.no-blue-star { background-color: #4a67dd; }
+.no-left-star { background-color: var(--blue); }
+.no-right-star { background-color: var(--blue); }
 
 /* Round Name */
 .round-name {
@@ -84,6 +85,22 @@
     color: white;
     font-weight: 700;
     font-family: "Baskerville BT";
+}
+
+/* Score Bar */
+.score-bar {
+    position: absolute;
+    top: 885px;
+    width: 898px;
+    height: 21px;   
+}
+.left-score-bar {
+    right: 50%;
+    background-color: var(--green);
+}
+.right-score-bar { 
+    left: 50%;
+    background-color: var(--blue);
 }
 
 /* Visualiser */
