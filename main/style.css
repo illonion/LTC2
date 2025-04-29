@@ -207,6 +207,12 @@
     display: flex;
     gap: 70px;
 }
+/* Strain Graph */
+#strain-graph {
+    position: absolute;
+    width: 463px;
+    height: 100%;
+}
 
 /* Visualiser */
 .visualiser {
