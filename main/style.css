@@ -73,6 +73,19 @@
 }
 .no-blue-star { background-color: #4a67dd; }
 
+/* Round Name */
+.round-name {
+    position: absolute;
+    top: 105px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+    letter-spacing: 3px;
+    color: white;
+    font-weight: 700;
+    font-family: "Baskerville BT";
+}
+
 /* Visualiser */
 .visualiser {
     position: absolute;
