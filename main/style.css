@@ -4,6 +4,8 @@
     --banner-horizontal-alignment: 17px;
     --team-name-horizontal-alignment: 124px;
     --team-star-horizontal-alignment: 121px;
+    --score-container-horizontal-alignment: 467px;
+    --lela-ms-paint-horizontal-alignment: -5px;
 }
 
 @font-face {
@@ -71,7 +73,7 @@
     height: 12px;
     border-radius: 50%;
 }
-.no-left-star { background-color: var(--blue); }
+.no-left-star { background-color: var(--green); }
 .no-right-star { background-color: var(--blue); }
 
 /* Round Name */
@@ -102,6 +104,39 @@
     left: 50%;
     background-color: var(--blue);
 }
+
+/* Score */
+.score-container {
+    position: absolute;
+    top: 922px;
+    width: 269px;
+    height: 55px;
+    border-radius: 10px;
+    font-size: 40px;
+    font-weight: 700;
+    font-family: "Baskerville BT";
+    overflow: hidden;
+    text-align: center;
+}
+.left-score-container { 
+    left: var(--score-container-horizontal-alignment);
+    color: #7dc337;
+}
+.right-score-container { 
+    right: var(--score-container-horizontal-alignment);
+    color: var(--blue);
+}
+/* Lela MS Paint */
+.lela-ms-paint {
+    --dimension: 59px;
+    position: absolute;
+    top: 0;
+    width: var(--dimension);
+    height: var(--dimension);
+    z-index: -1;
+}
+.left-lela-ms-paint { left: var(--lela-ms-paint-horizontal-alignment); }
+.right-lela-ms-paint { right: var(--lela-ms-paint-horizontal-alignment); }
 
 /* Visualiser */
 .visualiser {
