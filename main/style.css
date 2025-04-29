@@ -21,6 +21,8 @@
     width: 1920px;
     height: 1080px;
     background-image: url("static/background.png");
+    font-family: "Baskerville BT";
+    font-weight: 700;
 }
 
 /* Banners */
@@ -36,8 +38,6 @@
     position: absolute;
     top: 19px;
     font-size: 50px;
-    font-weight: 700;
-    font-family: "Baskerville BT";
 }
 .left-team-name { 
     color: var(--green);
@@ -85,8 +85,6 @@
     font-size: 30px;
     letter-spacing: 3px;
     color: white;
-    font-weight: 700;
-    font-family: "Baskerville BT";
 }
 
 /* Score Bar */
@@ -146,7 +144,8 @@
     left: 0;
     width: 1920px;
     height: 80px;
-    background-color: #0a0a0a;
+    /* background-color: #0a0a0a; */
+    color: white;
 }
 /* Now Playing Background Image */
 .now-playing-background-image {
@@ -159,6 +158,54 @@
     background-size: cover;
     background-position: center;
     opacity: 0.25;
+}
+
+/* Now Playing Left Section */
+.now-playing-left-section {
+    position: absolute;
+    width: 463px;
+    height: 100%;
+}
+/* Now Playing Left Section Overlay */
+.now-playing-left-section-overlay {
+    position: absolute;
+    width: 463px;
+    height: 100%;
+    opacity: 0.5;
+}
+.left-now-playing-left-section-overlay { background-color: var(--green); }
+.right-now-playing-left-section-overlay { background-color: var(--blue); }
+.now-playing-artist-title-difficulty {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 23px;
+    letter-spacing: 1px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Now Playing Bottom Row */
+.now-playing-bottom-row {
+    position: absolute;
+    bottom: 10px;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+/* Now Playing Star Rating and Length */
+.now-playing-star-rating { left: 10%; }
+.now-playing-length { right: 10%; }
+/* Now Playing Other Stats */
+.now-playing-stats-container {
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 70px;
 }
 
 /* Visualiser */
