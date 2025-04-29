@@ -1,5 +1,12 @@
 :root {
     --banner-horizontal-alignment: 17px;
+    --team-name-horizontal-alignment: 124px;
+}
+
+@font-face {
+    font-family: "Baskerville BT";
+    src: url("../fonts/Baskerville\ BT\ Bold.ttf");
+    font-weight: 700;
 }
 
 .main {
@@ -18,6 +25,23 @@
 }
 .left-banner { left: var(--banner-horizontal-alignment); }
 .right-banner { right: var(--banner-horizontal-alignment); }
+
+/* Team Name */
+.team-name {
+    position: absolute;
+    top: 19px;
+    font-size: 50px;
+    font-weight: 700;
+    font-family: "Baskerville BT";
+}
+.left-team-name { 
+    color: #c3ff88;
+    left: var(--team-name-horizontal-alignment);
+}
+.right-team-name {
+    color: #4a67dd;
+    right: var(--team-name-horizontal-alignment);
+}
 
 /* Visualiser */
 .visualiser {
