@@ -1,6 +1,9 @@
 :root {
+    --green: #c3ff88;
+    --blue: #4a67dd;
     --banner-horizontal-alignment: 17px;
     --team-name-horizontal-alignment: 124px;
+    --team-star-horizontal-alignment: 121px;
 }
 
 @font-face {
@@ -35,13 +38,40 @@
     font-family: "Baskerville BT";
 }
 .left-team-name { 
-    color: #c3ff88;
+    color: var(--green);
     left: var(--team-name-horizontal-alignment);
 }
 .right-team-name {
-    color: #4a67dd;
+    color: var(--blue);
     right: var(--team-name-horizontal-alignment);
 }
+
+/* Team Stars */
+.team-stars-container {
+    position: absolute;
+    top: 84px;
+    display: flex;
+    gap: 15px;
+}
+.left-team-star-container { left: var(--team-star-horizontal-alignment); }
+.right-team-star-container { right: var(--team-star-horizontal-alignment); }
+/* Team Star Wrapper */
+.team-star-wrapper {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Team star Images */
+.team-star-wrapper img { width: 44px; height: 44px; }
+.no-star {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.no-blue-star { background-color: #4a67dd; }
 
 /* Visualiser */
 .visualiser {
