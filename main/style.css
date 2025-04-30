@@ -8,6 +8,12 @@
     --lela-ms-paint-horizontal-alignment: -5px;
 }
 
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 @font-face {
     font-family: "Baskerville BT";
     src: url("../fonts/Baskerville\ BT\ Bold.ttf");
@@ -55,7 +61,10 @@
     gap: 15px;
 }
 .left-team-star-container { left: var(--team-star-horizontal-alignment); }
-.right-team-star-container { right: var(--team-star-horizontal-alignment); }
+.right-team-star-container { 
+    right: var(--team-star-horizontal-alignment);
+    flex-direction: row-reverse;
+}
 /* Team Star Wrapper */
 .team-star-wrapper {
     position: relative;
@@ -89,7 +98,7 @@
 /* Score Bar */
 .score-bar {
     position: absolute;
-    top: 885px;
+    top: 878px;
     width: 898px;
     height: 21px;   
 }
@@ -105,7 +114,7 @@
 /* Score */
 .score-container {
     position: absolute;
-    top: 922px;
+    top: 915px;
     width: 269px;
     height: 55px;
     border-radius: 10px;
@@ -115,6 +124,7 @@
     overflow: hidden;
     text-align: center;
     font-variant-numeric: tabular-nums;
+    background-color: white;
 }
 .left-score-container { 
     left: var(--score-container-horizontal-alignment);
@@ -131,10 +141,17 @@
     top: 0;
     width: var(--dimension);
     height: var(--dimension);
-    z-index: -1;
 }
 .left-lela-ms-paint { left: var(--lela-ms-paint-horizontal-alignment); }
 .right-lela-ms-paint { right: var(--lela-ms-paint-horizontal-alignment); }
+/* Score */
+.left-score, .right-score {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
 
 /* Now Playing */
 .now-playing {
@@ -143,7 +160,7 @@
     left: 0;
     width: 1920px;
     height: 80px;
-    /* background-color: #0a0a0a; */
+    background-color: #0a0a0a;
     color: white;
 }
 /* Now Playing Background Image */
@@ -170,6 +187,7 @@
     position: absolute;
     width: 463px;
     height: 100%;
+    background-color: white;
     opacity: 0.5;
 }
 .left-now-playing-left-section-overlay { background-color: var(--green); }
