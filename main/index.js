@@ -22,6 +22,9 @@ async function getBeatmaps() {
 }
 getBeatmaps()
 
+// Find beatmap
+const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.beatmapId) === beatmapId)
+
 // Team Stars
 const leftTeamStarContainerEl = document.getElementById("left-team-star-container")
 const rightTeamStarContainerEl = document.getElementById("right-team-star-container")
@@ -76,6 +79,13 @@ const animation = {
     "rightScore": new CountUp(rightScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
 }
 
+// Now Playing Information
+const nowPlayingBackgroundImageEl = document.getElementById("now-playing-background-image")
+const nowPlayingArtistTitleDifficultyEl = document.getElementById("now-playing-artist-title-difficulty")
+const nowPlayingStarRatingNumberEl = document.getElementById("now-playing-star-rating-number")
+const nowPlayingLengthNumberEl = document.getElementById("now-playing-length-number")
+let mapId, mapChecksum, findBeatmap = false
+
 // Websocket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
@@ -129,4 +139,28 @@ socket.onmessage = event => {
             rightScoreBarEl.style.width = "0px"
         }
     }
+
+    // Now Playing Information
+    if (mapId !== data.beatmap.id || mapChecksum !== data.beatmap.checksum) {
+        mapId = data.beatmap.id
+        mapChecksum = data.beatmap.checksum
+        findBeatmap = false
+
+        nowPlayingBackgroundImageEl.style.backgroundImage = `url('http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapBackground)}')`
+        nowPlayingArtistTitleDifficultyEl.innerText = `${data.beatmap.artist} - ${data.beatmap.title} - [${data.beatmap.version}]`
+        nowPlayingStarRatingNumberEl.innerText = data.beatmap.stats.stars.total
+        displayLength(Math.round((data.beatmap.time.lastObject - data.beatmap.time.firstObject) / 1000))
+
+        const currentMap = findBeatmapById(mapId)
+        if (currentMap) {
+            findBeatmap = true
+        }
+    }
+}
+
+// Display length
+function displayLength(second) {
+    const minutes = Math.floor(second / 60)
+    const seconds = second % 60
+    nowPlayingLengthNumberEl.innerText = `${minutes < 10? minutes.toString().padStart(2, "0") : minutes}:${seconds < 10? seconds.toString().padStart(2, "0") : seconds}`
 }
