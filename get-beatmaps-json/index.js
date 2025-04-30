@@ -26,7 +26,7 @@ async function getBeatmaps() {
         await delay(1000)
         let responseJson = await response.json()
         responseJson[0].mod = allBeatmaps[i].mod
-        responseJson[0].mod = allBeatmaps[i].order
+        responseJson[0].order = allBeatmaps[i].order
         
         allBeatmapsJson.push(responseJson[0])
 
