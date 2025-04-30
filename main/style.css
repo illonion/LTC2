@@ -165,7 +165,7 @@ video {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 1920px;
+    width: 1600px;
     height: 80px;
     background-color: #0a0a0a;
     color: white;
@@ -189,16 +189,6 @@ video {
     width: 463px;
     height: 100%;
 }
-/* Now Playing Left Section Overlay */
-.now-playing-left-section-overlay {
-    position: absolute;
-    width: 463px;
-    height: 100%;
-    background-color: white;
-    opacity: 0.5;
-}
-.left-now-playing-left-section-overlay { background-color: var(--green); }
-.right-now-playing-left-section-overlay { background-color: var(--blue); }
 .now-playing-artist-title-difficulty {
     position: absolute;
     top: 10px;
@@ -226,36 +216,19 @@ video {
 .now-playing-length { right: 10%; }
 /* Now Playing Other Stats */
 .now-playing-stats-container {
-    left: 50%;
+    left: 981.5px;
     transform: translateX(-50%);
     display: flex;
     gap: 70px;
-}
-
-/* Strain Graph */
-#strain-graph {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 463px;
-    height: 100%;
-}
-#progress {
-	position: absolute; bottom: 0; left: 0;
-	width: 926px; height: 100%;
-	padding: 0;
-	overflow: hidden;
-	transition: 100ms linear;
-	-webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 49.95%, transparent 50%);
-	mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 49.95%, transparent 50%);
+    white-space: nowrap;
 }
 
 /* Visualiser */
 .visualiser {
     position: absolute;
     bottom: 0;
-    left: 463px;
-    width: 994px;
+    left: 0;
+    width: 100%;
     height: 80px;
     opacity: 0.35;
 }
