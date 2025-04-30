@@ -27,49 +27,52 @@
         <!-- Round Name -->
         <div class="round-name" id="round-name">Round of 16</div>
 
-        <!-- Scores -->
-        <!-- Score Bar -->
-        <div class="score-bar left-score-bar"></div>
-        <div class="score-bar right-score-bar"></div>
+        <!-- Score Visible Section -->
+        <div class="score-visible" id="score-visible">
+            <!-- Scores -->
+            <!-- Score Bar -->
+            <div class="score-bar left-score-bar"></div>
+            <div class="score-bar right-score-bar"></div>
 
-        <!-- Score Styling -->
-        <div class="score-container left-score-container">
-            <img class="lela-ms-paint left-lela-ms-paint" src="static/left lela mspaint.png">
-            <div class="left-score">9,999,999</div>
-        </div>
-        <div class="score-container right-score-container">
-            <img class="lela-ms-paint right-lela-ms-paint" src="static/left lela mspaint.png">
-            <div class="right-score">9,999,999</div>
-        </div>
+            <!-- Score Styling -->
+            <div class="score-container left-score-container">
+                <img class="lela-ms-paint left-lela-ms-paint" src="static/left lela mspaint.png">
+                <div class="left-score">9,999,999</div>
+            </div>
+            <div class="score-container right-score-container">
+                <img class="lela-ms-paint right-lela-ms-paint" src="static/left lela mspaint.png">
+                <div class="right-score">9,999,999</div>
+            </div>
 
-        <!-- Now Playing -->
-        <div class="now-playing">
-            <div class="now-playing-background-image"></div>
-            <section class="now-playing-left-section">
-                <div class="now-playing-left-section-overlay"></div>
-                <div class="now-playing-artist-title-difficulty">Song Title - Artist [Difficulty] Super Long Name</div>
-                <div class="now-playing-bottom-row now-playing-star-rating">Star: <span class="now-playing-star-rating-number">99.99</span>*</div>
-                <div class="now-playing-bottom-row now-playing-length">Length: <span class="now-playing-star-rating-number">99:99</span></div>
-            </section>
-            <section class="now-playing-bottom-row now-playing-stats-container">
-                <div class="now-playing-stats">AR: <span id="now-playing-stats-ar">99</span></div>
-                <div class="now-playing-stats">CS: <span id="now-playing-stats-cs">99</span></div>
-                <div class="now-playing-stats">HP: <span id="now-playing-stats-hp">99</span></div>
-                <div class="now-playing-stats">OD: <span id="now-playing-stats-od">99</span></div>
-                <div class="now-playing-stats">BPM: <span id="now-playing-stats-bpm">222</span></div>
-            </section>
-            <!-- Strain Graph -->
-            <section id="strain-graph">
-                <canvas class="strain-graph-detail" id="strain" width="463" height="80"></canvas>
-                <div id="progress">
-                    <canvas class="strain-graph-detail" id="strain-progress" width="463" height="80"></canvas>
-                </div>
-            </section>
+            <!-- Now Playing -->
+            <div class="now-playing">
+                <div class="now-playing-background-image"></div>
+                <section class="now-playing-left-section">
+                    <div class="now-playing-left-section-overlay"></div>
+                    <div class="now-playing-artist-title-difficulty">Song Title - Artist [Difficulty] Super Long Name</div>
+                    <div class="now-playing-bottom-row now-playing-star-rating">Star: <span class="now-playing-star-rating-number">99.99</span>*</div>
+                    <div class="now-playing-bottom-row now-playing-length">Length: <span class="now-playing-star-rating-number">99:99</span></div>
+                </section>
+                <section class="now-playing-bottom-row now-playing-stats-container">
+                    <div class="now-playing-stats">AR: <span id="now-playing-stats-ar">99</span></div>
+                    <div class="now-playing-stats">CS: <span id="now-playing-stats-cs">99</span></div>
+                    <div class="now-playing-stats">HP: <span id="now-playing-stats-hp">99</span></div>
+                    <div class="now-playing-stats">OD: <span id="now-playing-stats-od">99</span></div>
+                    <div class="now-playing-stats">BPM: <span id="now-playing-stats-bpm">222</span></div>
+                </section>
+                <!-- Strain Graph -->
+                <section id="strain-graph">
+                    <canvas class="strain-graph-detail" id="strain" width="463" height="80"></canvas>
+                    <div id="progress">
+                        <canvas class="strain-graph-detail" id="strain-progress" width="463" height="80"></canvas>
+                    </div>
+                </section>
         </div>
 
         <!-- Visualiser -->
         <div class="visualiser" id="visualiser"><canvas class="canvas" id="canvas"></canvas></div>
         <audio id="audio" src="http://127.0.0.1:24050/Songs/780932%20VINXIS%20-%20A%20Centralized%20View/audio.mp3"></audio>
+        </div>
     </div>
 
     <script src="../_shared/deps/Chart.min.js"></script>

@@ -61,12 +61,17 @@ const leftTeamNameEl = document.getElementById("left-team-name")
 const rightTeamNameEl = document.getElementById("right-team-name")
 let leftTeamName, rightTeamName
 
+// Score visibility
+const scoreVisibilityEl = document.getElementById("score-visible")
+let scoreVisibility
+
 // Websocket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
     const data = JSON.parse(event.data)
     console.log(data)
 
+    // Teams
     if (leftTeamName !== data.tourney.team.left) {
         leftTeamName = data.tourney.team.left
         leftTeamNameEl.innerText = leftTeamName
@@ -74,5 +79,16 @@ socket.onmessage = event => {
     if (rightTeamName !== data.tourney.team.right) {
         rightTeamName = data.tourney.team.right
         rightTeamNameEl.innerText = rightTeamName
+    }
+
+    // Score visibility
+    if (scoreVisibility !== data.tourney.scoreVisible) {
+        scoreVisibility = data.tourney.scoreVisible
+
+        if (scoreVisibility) {
+            scoreVisibilityEl.style.opacity = 1
+        } else {
+            scoreVisibilityEl.style.opacity = 0
+        }
     }
 }

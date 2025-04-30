@@ -95,6 +95,12 @@ video {
     color: white;
 }
 
+/* Score Visible */
+.score-visible {
+    opacity: 1;
+    transition: 500ms ease-in-out;
+}
+
 /* Score Bar */
 .score-bar {
     position: absolute;
