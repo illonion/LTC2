@@ -47,6 +47,10 @@
             <!-- Now Playing -->
             <div class="now-playing">
                 <div class="now-playing-background-image" id="now-playing-background-image"></div>
+                <!-- Visualiser -->
+                <div class="visualiser" id="visualiser"><canvas class="canvas" id="canvas"></canvas></div>
+                <audio id="audio" src="http://127.0.0.1:24050/Songs/780932%20VINXIS%20-%20A%20Centralized%20View/audio.mp3"></audio>
+                <!-- Left Section -->
                 <section class="now-playing-left-section">
                     <div class="now-playing-left-section-overlay"></div>
                     <div class="now-playing-artist-title-difficulty" id="now-playing-artist-title-difficulty">Song Title - Artist [Difficulty] Super Long Name</div>
@@ -68,10 +72,15 @@
                     </div>
                 </section>
             </div>
-
-            <!-- Visualiser -->
-            <div class="visualiser" id="visualiser"><canvas class="canvas" id="canvas"></canvas></div>
-            <audio id="audio" src="http://127.0.0.1:24050/Songs/780932%20VINXIS%20-%20A%20Centralized%20View/audio.mp3"></audio>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-button-container">
+                <button onclick="startVisualiser()">Start Visualiser</button>
+            </div>
         </div>
     </div>
 
@@ -80,6 +89,7 @@
     <script src="../_shared/deps/reconnecting-websocket.min.js"></script>
     <script src="../_shared/deps/smooth.js"></script>
     <script src="../_shared/utils.js"></script>
+    <script src="visualiser.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

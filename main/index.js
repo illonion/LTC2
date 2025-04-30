@@ -66,7 +66,7 @@ let leftTeamName, rightTeamName
 
 // Score visibility
 const scoreVisibilityEl = document.getElementById("score-visible")
-let scoreVisibility
+let scoreVisibility = true
 
 // Score bar
 const leftScoreBarEl = document.getElementById("left-score-bar")
@@ -84,7 +84,7 @@ const nowPlayingBackgroundImageEl = document.getElementById("now-playing-backgro
 const nowPlayingArtistTitleDifficultyEl = document.getElementById("now-playing-artist-title-difficulty")
 const nowPlayingStarRatingNumberEl = document.getElementById("now-playing-star-rating-number")
 const nowPlayingLengthNumberEl = document.getElementById("now-playing-length-number")
-let mapId, mapChecksum, findBeatmap = false
+let mapId, mapChecksum, findBeatmap = false, currentMap
 
 // Now Playing Stats
 const nowPlayingStatsAr = document.getElementById("now-playing-stats-ar")
@@ -99,6 +99,8 @@ let tempStrains, seek, fullTime
 let changeStats = false
 let statsCheck = false
 let last_strain_update = 0
+const strainGraphEl = document.getElementById("strain-graph")
+const strainGraphWidth = strainGraphEl.getBoundingClientRect().width
 
 window.onload = function () {
 	let ctx = document.getElementById('strain').getContext('2d')
@@ -107,6 +109,9 @@ window.onload = function () {
 	let ctxProgress = document.getElementById('strain-progress').getContext('2d')
 	window.strainGraphProgress = new Chart(ctxProgress, configProgress)
 }
+
+// Check resync
+let checkResync = false
 
 // Websocket
 const socket = createTosuWsSocket()
@@ -125,15 +130,15 @@ socket.onmessage = event => {
     }
 
     // Score visibility
-    if (scoreVisibility !== data.tourney.scoreVisible) {
-        scoreVisibility = data.tourney.scoreVisible
+    // if (scoreVisibility !== data.tourney.scoreVisible) {
+    //     scoreVisibility = data.tourney.scoreVisible
 
-        if (scoreVisibility) {
-            scoreVisibilityEl.style.opacity = 1
-        } else {
-            scoreVisibilityEl.style.opacity = 0
-        }
-    }
+    //     if (scoreVisibility) {
+    //         scoreVisibilityEl.style.opacity = 1
+    //     } else {
+    //         scoreVisibilityEl.style.opacity = 0
+    //     }
+    // }
 
     // Scores
     if (scoreVisibility) {
@@ -164,16 +169,21 @@ socket.onmessage = event => {
 
     // Now Playing Information
     if (mapId !== data.beatmap.id || mapChecksum !== data.beatmap.checksum) {
+
+        audioElement.setAttribute("src", `http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapAudio)}`)
+        changeAudioAndPlayFromPosition(`http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapAudio)}`, data.beatmap.time.live)
+
         mapId = data.beatmap.id
         mapChecksum = data.beatmap.checksum
         findBeatmap = false
-
+        checkResync = false
+        
         nowPlayingBackgroundImageEl.style.backgroundImage = `url('http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapBackground)}')`
         nowPlayingArtistTitleDifficultyEl.innerText = `${data.beatmap.artist} - ${data.beatmap.title} - [${data.beatmap.version}]`
         nowPlayingStarRatingNumberEl.innerText = data.beatmap.stats.stars.total
         displayLength(Math.round((data.beatmap.time.lastObject - data.beatmap.time.firstObject) / 1000))
 
-        const currentMap = findBeatmapById(mapId)
+        currentMap = findBeatmapById(mapId)
         if (currentMap) {
             findBeatmap = true
             let currentAr = Math.round(Number(currentMap.diff_approach) * 10) / 10
@@ -204,6 +214,8 @@ socket.onmessage = event => {
             nowPlayingStatsOd.innerText = currentOd
             nowPlayingStatsBpm.innerText = currentBpm
         }
+    } else if (audioBuffer || !audioElement.paused) {
+        checkResync = true
     }
 
     if (!findBeatmap) {
@@ -215,11 +227,11 @@ socket.onmessage = event => {
     }
 
     // Strain graph
-    const fullStrains = data.performance.graph.series[0].data
+    const fullStrains = data.performance.graph.series[0].data.map((num, index) => num + data.performance.graph.series[1].data[index] + data.performance.graph.series[2].data[index] + data.performance.graph.series[3].data[index]);
     if (tempStrains != JSON.stringify(fullStrains) && window.strainGraph) {
         tempStrains = JSON.stringify(fullStrains)
         if (fullStrains) {
-            let temp_strains = smooth(fullStrains, 5)
+            let temp_strains = smooth(fullStrains, 4)
 			let new_strains = []
 			for (let i = 0; i < 60; i++) {
 				new_strains.push(temp_strains[Math.floor(i * (temp_strains.length / 60))])
@@ -245,21 +257,45 @@ socket.onmessage = event => {
     }
 
     let now = Date.now()
-	if (fullTime !== data.beatmap.time.mp3Length) { fullTime = data.beatmap.time.mp3Length; onepart = 586 / fullTime }
+	if (fullTime !== data.beatmap.time.mp3Length) { fullTime = data.beatmap.time.mp3Length; onepart = 463 / fullTime }
 	if (seek !== data.beatmap.time.live && fullTime && now - last_strain_update > 300) {
 		last_strain_update = now
 		seek = data.beatmap.time.live
 
 		if (data.state.number !== 2) {
-			progressChart.style.maskPosition = '-586px 0px'
-			progressChart.style.webkitMaskPosition = '-586px 0px'
+			progressChart.style.maskPosition = `-${strainGraphWidth}px 0px`
+			progressChart.style.webkitMaskPosition = `-${strainGraphWidth}px 0px`
 		}
 		else {
-			let maskPosition = `${-586 + onepart * seek}px 0px`
+			let maskPosition = `${-1 * strainGraphWidth + onepart * seek}px 0px`
 			progressChart.style.maskPosition = maskPosition
 			progressChart.style.webkitMaskPosition = maskPosition
 		}
 	}
+
+    // Resume visualiser
+    if (visualiserResume) {
+        visualiserResume = false
+        checkResync = false
+        changeAudioAndPlayFromPosition(`http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapAudio)}`, data.beatmap.time.live)
+    } else {
+        checkResync = true
+    }
+
+    // Resync visualiser
+    if ((audioBuffer || !audioElement.paused) && checkResync) {
+        syncAudioWithExternalTime(data.beatmap.time.live);
+    }
+
+    // Check for DT
+    // Get mods of player 1
+    let player1Mods
+    if (data.tourney.clients.length > 1) player1Mods = getMods(data.tourney.clients[0].play.mods.number)
+    if ((currentMap && currentMap.mod.includes("DT")) || (player1Mods && player1Mods.includes("DT"))) {
+        setPlaybackSpeed(1.5)
+    } else {
+        setPlaybackSpeed(1)
+    }
 }
 
 // Display length
@@ -326,4 +362,9 @@ let configProgress = {
 		},
 		animation: { duration: 0 }
 	}
+}
+
+let visualiserResume = false
+function startVisualiser() {
+    visualiserResume = true
 }
