@@ -65,6 +65,17 @@ let leftTeamName, rightTeamName
 const scoreVisibilityEl = document.getElementById("score-visible")
 let scoreVisibility
 
+// Score bar
+const leftScoreBarEl = document.getElementById("left-score-bar")
+const rightScoreBarEl = document.getElementById("right-score-bar")
+// Scores
+const leftScoreEl = document.getElementById("left-score")
+const rightScoreEl = document.getElementById("right-score")
+const animation = {
+    "leftScore": new CountUp(leftScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
+    "rightScore": new CountUp(rightScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
+}
+
 // Websocket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
@@ -89,6 +100,33 @@ socket.onmessage = event => {
             scoreVisibilityEl.style.opacity = 1
         } else {
             scoreVisibilityEl.style.opacity = 0
+        }
+    }
+
+    // Scores
+    if (scoreVisibility) {
+        let currentLeftScore = 0
+        let currentRightScore = 0
+
+        for (let i = 0; i < data.tourney.clients.length; i++) {
+            data.tourney.clients[i].team === "left"? currentLeftScore += data.tourney.clients[i].play.score : currentRightScore += data.tourney.clients[i].play.score
+        }
+
+        animation.leftScore.update(currentLeftScore)
+        animation.rightScore.update(currentRightScore)
+
+        // Scorebar
+        const currentScoreDelta = Math.abs(currentLeftScore - currentRightScore)
+        const barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
+        if (currentLeftScore > currentRightScore) {
+            leftScoreBarEl.style.width = `${barWidth}px`
+            rightScoreBarEl.style.width = "0px"
+        } else if (currentLeftScore < currentRightScore) {
+            leftScoreBarEl.style.width = "0px"
+            rightScoreBarEl.style.width = `${barWidth}px`
+        } else if (currentLeftScore === currentRightScore) {
+            leftScoreBarEl.style.width = "0px"
+            rightScoreBarEl.style.width = "0px"
         }
     }
 }

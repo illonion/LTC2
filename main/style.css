@@ -106,7 +106,8 @@ video {
     position: absolute;
     top: 878px;
     width: 898px;
-    height: 21px;   
+    height: 21px;
+    transition: 500ms ease-in-out; 
 }
 .left-score-bar {
     right: 50%;
