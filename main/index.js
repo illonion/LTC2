@@ -2,6 +2,12 @@
 const roundNameEl = document.getElementById("round-name")
 let currentBestOf, currentFirstTo, currentLeftStars = 0, currentRightStars = 0
 let allBeatmaps
+/**
+ * Get all beatmaps from the beatmaps.json file
+ * Set the round name
+ * Set the ebst of and first to
+ * Call create star display function
+ */
 async function getBeatmaps() {
     const response = await fetch("../_data/beatmaps.json")
     const responseJson = await response.json()
@@ -28,6 +34,9 @@ const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.
 // Team Stars
 const leftTeamStarContainerEl = document.getElementById("left-team-star-container")
 const rightTeamStarContainerEl = document.getElementById("right-team-star-container")
+/**
+ * Creates the star display
+ */
 function createStarDisplay() {
     leftTeamStarContainerEl.innerHTML = ""
     rightTeamStarContainerEl.innerHTML = ""
@@ -74,9 +83,17 @@ const rightScoreBarEl = document.getElementById("right-score-bar")
 // Scores
 const leftScoreEl = document.getElementById("left-score")
 const rightScoreEl = document.getElementById("right-score")
+const leftComboScoreEl = document.getElementById("left-combo-score")
+const rightComboScoreEl = document.getElementById("right-combo-score")
+const leftMissScoreEl = document.getElementById("left-miss-score")
+const rightMissScoreEl = document.getElementById("right-miss-score")
 const animation = {
     "leftScore": new CountUp(leftScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
     "rightScore": new CountUp(rightScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
+    "leftCombo": new CountUp(leftComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
+    "rightCombo": new CountUp(leftComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
+    "leftMiss": new CountUp(leftMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
+    "rightMiss": new CountUp(rightMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"})
 }
 
 // Now Playing Information
@@ -128,23 +145,86 @@ socket.onmessage = event => {
         let currentLeftScore = 0
         let currentRightScore = 0
 
+        // Get scores for each team
         for (let i = 0; i < data.tourney.clients.length; i++) {
-            data.tourney.clients[i].team === "left"? currentLeftScore += data.tourney.clients[i].play.score : currentRightScore += data.tourney.clients[i].play.score
+            const currentPlayerPlay = data.tourney.clients[i].play
+            if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "combo") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.combo.max : currentRightScore += currentPlayerPlay.combo.max
+            } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.hits["0"] : currentRightScore += currentPlayerPlay.hits["0"]
+            } else {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.score : currentRightScore += currentPlayerPlay.score
+            }
         }
 
-        animation.leftScore.update(currentLeftScore)
-        animation.rightScore.update(currentRightScore)
-
-        // Scorebar
+        // Set displays
         const currentScoreDelta = Math.abs(currentLeftScore - currentRightScore)
-        const barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
-        if (currentLeftScore > currentRightScore) {
+        if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "combo") {
+            // Set Display
+            leftScoreEl.style.opacity = 0
+            rightScoreEl.style.opacity = 0
+            leftComboScoreEl.style.opacity = 1
+            rightComboScoreEl.style.opacity = 1
+            leftMissScoreEl.style.opacity = 0
+            rightMissScoreEl.style.opacity = 0
+            animation.leftScore.update(0)
+            animation.rightScore.update(0)
+            animation.leftCombo.update(currentLeftScore)
+            animation.rightCombo.update(currentRightScore)
+            animation.leftMiss.update(0)
+            animation.rightMiss.update(0)
+
+            // Bar Width
+            const barWidth = Math.min(currentScoreDelta / 50 * 898, 898)
+        } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
+            // Set Display
+            leftScoreEl.style.opacity = 0
+            rightScoreEl.style.opacity = 0
+            leftComboScoreEl.style.opacity = 0
+            rightComboScoreEl.style.opacity = 0
+            leftMissScoreEl.style.opacity = 1
+            rightMissScoreEl.style.opacity = 1
+            animation.leftScore.update(0)
+            animation.rightScore.update(0)
+            animation.leftCombo.update(0)
+            animation.rightCombo.update(0)
+            animation.leftMiss.update(currentLeftScore)
+            animation.rightMiss.update(currentRightScore)
+
+            // Bar Width
+            const barWidth = Math.min(currentScoreDelta / 20 * 898, 898)
+        } else {
+            // Set Display
+            leftScoreEl.style.opacity = 1
+            rightScoreEl.style.opacity = 1
+            leftComboScoreEl.style.opacity = 0
+            rightComboScoreEl.style.opacity = 0
+            leftMissScoreEl.style.opacity = 0
+            rightMissScoreEl.style.opacity = 0
+            animation.leftScore.update(currentLeftScore)
+            animation.rightScore.update(currentRightScore)
+            animation.leftCombo.update(0)
+            animation.rightCombo.update(0)
+            animation.leftMiss.update(0)
+            animation.rightMiss.update(0)
+
+            // Bar Width
+            const barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
+        }
+
+        // Score Bar - Set who is winning
+        let winning = ""
+        if (currentLeftScore === currentRightScore) winning = "none"
+        else if ((currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore > currentRightScore) || currentRightScore > currentLeftScore) winning = "right"
+        else winning = "left"
+
+        if (winning === "left") {
             leftScoreBarEl.style.width = `${barWidth}px`
             rightScoreBarEl.style.width = "0px"
-        } else if (currentLeftScore < currentRightScore) {
+        } else if (winning === "none") {
             leftScoreBarEl.style.width = "0px"
             rightScoreBarEl.style.width = `${barWidth}px`
-        } else if (currentLeftScore === currentRightScore) {
+        } else if (winning === "right") {
             leftScoreBarEl.style.width = "0px"
             rightScoreBarEl.style.width = "0px"
         }
@@ -244,6 +324,9 @@ function displayLength(second) {
     nowPlayingLengthNumberEl.innerText = `${minutes < 10? minutes.toString().padStart(2, "0") : minutes}:${seconds < 10? seconds.toString().padStart(2, "0") : seconds}`
 }
 
+/**
+ * Start the visualiser
+ */
 let visualiserResume = false
 function startVisualiser() {
     visualiserResume = true
