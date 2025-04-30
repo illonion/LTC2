@@ -1,0 +1,18 @@
+{
+    "roundName": "Round of 16",
+    "beatmaps": [
+        {"beatmap_id": 3661657, "mod": "NM", "order": 1},
+        {"beatmap_id": 4813758, "mod": "NM", "order": 2},
+        {"beatmap_id": 4104690, "mod": "NM", "order": 3},
+        {"beatmap_id": 3917923, "mod": "NM", "order": 4},
+        {"beatmap_id": 3193011, "mod": "HD", "order": 1},
+        {"beatmap_id": 4666052, "mod": "HD", "order": 2},
+        {"beatmap_id": 4901363, "mod": "HR", "order": 1},
+        {"beatmap_id": 4385160, "mod": "HR", "order": 2},
+        {"beatmap_id": 2512118, "mod": "DT", "order": 1},
+        {"beatmap_id": 3851000, "mod": "DT", "order": 2},
+        {"beatmap_id": 3452047, "mod": "EX", "order": 1},
+        {"beatmap_id": 2294115, "mod": "EX", "order": 2},
+        {"beatmap_id": 4491365, "mod": "TB", "order": 1}
+    ]
+}
