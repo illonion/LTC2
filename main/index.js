@@ -86,6 +86,13 @@ const nowPlayingStarRatingNumberEl = document.getElementById("now-playing-star-r
 const nowPlayingLengthNumberEl = document.getElementById("now-playing-length-number")
 let mapId, mapChecksum, findBeatmap = false
 
+// Now Playing Stats
+const nowPlayingStatsAr = document.getElementById("now-playing-stats-ar")
+const nowPlayingStatsCs = document.getElementById("now-playing-stats-cs")
+const nowPlayingStatsHp = document.getElementById("now-playing-stats-hp")
+const nowPlayingStatsOd = document.getElementById("now-playing-stats-od")
+const nowPlayingStatsBpm = document.getElementById("now-playing-stats-bpm")
+
 // Websocket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
@@ -154,7 +161,42 @@ socket.onmessage = event => {
         const currentMap = findBeatmapById(mapId)
         if (currentMap) {
             findBeatmap = true
+            let currentAr = Math.round(Number(currentMap.diff_approach) * 10) / 10
+            let currentCs = Math.round(Number(currentMap.diff_size) * 10) / 10
+            let currentHp = Math.round(Number(currentMap.diff_drain) * 10) / 10
+            let currentOd = Math.round(Number(currentMap.diff_overall) * 10) / 10
+            let currentBpm = Number(currentMap.bpm)
+
+            switch (currentMap.mod) {
+                case "HR":
+                    currentCs = Math.min(Math.round(currentCs * 1.3 * 10) / 10, 10)
+                    currentAr = Math.min(Math.round(currentAr * 1.4 * 10) / 10, 10)
+                    currentOd = Math.min(Math.round(currentOd * 1.4 * 10) / 10, 10)
+                    currentHp = Math.min(Math.round(currentHp) * 1.4 * 10 / 10, 10)
+                    break
+                case "DT":
+                    if (currentAr > 5) currentAr = Math.round((((1200 - (( 1200 - (currentAr - 5) * 150) * 2 / 3)) / 150) + 5) * 10) / 10
+                    else currentAr = Math.round((1800 - ((1800 - currentAr * 120) * 2 / 3)) / 120 * 10) / 10
+                    currentOd = Math.round((79.5 - (( 79.5 - 6 * currentOd) * 2 / 3)) / 6 * 10) / 10
+                    currentBpm = Math.round(currentBpm * 1.5)
+                    currentLength = Math.round(currentLength / 1.5)
+                    break
+            }
+
+            nowPlayingStatsAr.innerText = currentAr
+            nowPlayingStatsCs.innerText = currentCs
+            nowPlayingStatsHp.innerText = currentHp
+            nowPlayingStatsOd.innerText = currentOd
+            nowPlayingStatsBpm.innerText = currentBpm
         }
+    }
+
+    if (!findBeatmap) {
+        nowPlayingStatsAr.innerText = data.beatmap.stats.ar.converted
+        nowPlayingStatsCs.innerText = data.beatmap.stats.cs.converted
+        nowPlayingStatsHp.innerText = data.beatmap.stats.hp.converted
+        nowPlayingStatsOd.innerText = data.beatmap.stats.od.converted
+        nowPlayingStatsBpm.innerText = data.beatmap.stats.bpm.common
     }
 }
 
