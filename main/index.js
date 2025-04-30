@@ -93,6 +93,21 @@ const nowPlayingStatsHp = document.getElementById("now-playing-stats-hp")
 const nowPlayingStatsOd = document.getElementById("now-playing-stats-od")
 const nowPlayingStatsBpm = document.getElementById("now-playing-stats-bpm")
 
+// Strains
+const progressChart = document.getElementById("progress")
+let tempStrains, seek, fullTime
+let changeStats = false
+let statsCheck = false
+let last_strain_update = 0
+
+window.onload = function () {
+	let ctx = document.getElementById('strain').getContext('2d')
+	window.strainGraph = new Chart(ctx, config)
+
+	let ctxProgress = document.getElementById('strain-progress').getContext('2d')
+	window.strainGraphProgress = new Chart(ctxProgress, configProgress)
+}
+
 // Websocket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
@@ -198,6 +213,53 @@ socket.onmessage = event => {
         nowPlayingStatsOd.innerText = data.beatmap.stats.od.converted
         nowPlayingStatsBpm.innerText = data.beatmap.stats.bpm.common
     }
+
+    // Strain graph
+    const fullStrains = data.performance.graph.series[0].data
+    if (tempStrains != JSON.stringify(fullStrains) && window.strainGraph) {
+        tempStrains = JSON.stringify(fullStrains)
+        if (fullStrains) {
+            let temp_strains = smooth(fullStrains, 5)
+			let new_strains = []
+			for (let i = 0; i < 60; i++) {
+				new_strains.push(temp_strains[Math.floor(i * (temp_strains.length / 60))])
+			}
+			new_strains = [0, ...new_strains, 0]
+
+			config.data.datasets[0].data = new_strains
+			config.data.labels = new_strains
+			config.options.scales.y.max = Math.max(...new_strains)
+			configProgress.data.datasets[0].data = new_strains
+			configProgress.data.labels = new_strains
+			configProgress.options.scales.y.max = Math.max(...new_strains)
+			window.strainGraph.update()
+			window.strainGraphProgress.update()
+        } else {
+			config.data.datasets[0].data = []
+			config.data.labels = []
+			configProgress.data.datasets[0].data = []
+			configProgress.data.labels = []
+			window.strainGraph.update()
+			window.strainGraphProgress.update()
+		}
+    }
+
+    let now = Date.now()
+	if (fullTime !== data.beatmap.time.mp3Length) { fullTime = data.beatmap.time.mp3Length; onepart = 586 / fullTime }
+	if (seek !== data.beatmap.time.live && fullTime && now - last_strain_update > 300) {
+		last_strain_update = now
+		seek = data.beatmap.time.live
+
+		if (data.state.number !== 2) {
+			progressChart.style.maskPosition = '-586px 0px'
+			progressChart.style.webkitMaskPosition = '-586px 0px'
+		}
+		else {
+			let maskPosition = `${-586 + onepart * seek}px 0px`
+			progressChart.style.maskPosition = maskPosition
+			progressChart.style.webkitMaskPosition = maskPosition
+		}
+	}
 }
 
 // Display length
@@ -205,4 +267,63 @@ function displayLength(second) {
     const minutes = Math.floor(second / 60)
     const seconds = second % 60
     nowPlayingLengthNumberEl.innerText = `${minutes < 10? minutes.toString().padStart(2, "0") : minutes}:${seconds < 10? seconds.toString().padStart(2, "0") : seconds}`
+}
+
+// Configs are for strain graphs
+let config = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: 'rgba(245, 245, 245, 0)',
+			backgroundColor: 'rgba(195, 255, 136, 0.5)',
+			data: [],
+			fill: true,
+			stepped: false,
+		}]
+	},
+	options: {
+		tooltips: { enabled: false },
+		legend: { display: false, },
+		elements: { point: { radius: 0 } },
+		responsive: false,
+		scales: {
+			x: { display: false, },
+			y: {
+				display: false,
+				min: 0,
+				max: 100
+			}
+		},
+		animation: { duration: 0 }
+	}
+}
+
+let configProgress = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: 'rgba(245, 245, 245, 0)',
+			backgroundColor: 'rgba(195, 255, 136, 1)',
+			data: [],
+			fill: true,
+			stepped: false,
+		}]
+	},
+	options: {
+		tooltips: { enabled: false },
+		legend: { display: false, },
+		elements: { point: { radius: 0 } },
+		responsive: false,
+		scales: {
+			x: { display: false, },
+			y: {
+				display: false,
+				min: 0,
+				max: 100
+			}
+		},
+		animation: { duration: 0 }
+	}
 }
