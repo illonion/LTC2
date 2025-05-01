@@ -1,3 +1,7 @@
+:root {
+    --banner-horizontal-alignment: 500px;
+}
+
 .main { background-image: url("static/background.png") }
 
 /* Round Name */
@@ -20,3 +24,29 @@
 .top-border { top: 100px; }
 .middle-border { top: 481px; }
 .bottom-border { top: 856px; }
+
+/* Team Section */
+.team-section {
+    position: absolute;
+    
+    width: 1920px;
+    height: 380px;
+}
+.left-team-section { top: 100px; }
+.right-team-section { top: 481px; }
+
+/* Team Section Overlay */
+.team-section-overlay {
+    opacity: 0.502;
+    width: 100%;
+    height: 100%;
+}
+.left-team-section-overlay { background-image: linear-gradient(180deg, #c3ff87 0%, #295741 100%); }
+.right-team-section-overlay { background-image: linear-gradient(180deg, #4967dd 0%, #b9ddff 100%); }
+
+/* Banner */
+.banner {
+    position: absolute;
+    left: 25px;
+    top: 6px;
+}
