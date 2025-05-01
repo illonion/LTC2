@@ -56,7 +56,7 @@ function createStarDisplay() {
         let image
         if (status === "fill") {
             image = document.createElement("img")
-            image.setAttribute("src", `static/${colour} star.png`)
+            image.setAttribute("src", `../_shared/assets/${colour} star.png`)
         } else {
             image = document.createElement("div")
             image.classList.add("no-star", (colour === "green")? "no-left-star" : "no-right-star")

@@ -77,3 +77,36 @@
 }
 .left-team-horizontal-rule { background-color: #3e815f; }
 .right-team-horizontal-rule { background-color: #b9ddff; }
+
+/* Team Star Container */
+.team-star-container {
+    position: absolute;
+    top: 182px;
+    left: 168px;
+    display: flex;
+    gap: 20px;
+}
+/* Team Star Wrapper */
+.team-star-wrapper {
+    position: relative;
+    width: 39px;
+    height: 39px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Team star Images */
+.no-star {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.no-left-star { background-color: var(--green); }
+.no-right-star { background-color: var(--blue); }
+
+/* Team Ban Image */
+.team-ban-image {
+    position: absolute;
+    top: 280px;
+    left: 100px;
+}
