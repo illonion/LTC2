@@ -217,3 +217,21 @@
     font-size: 40px;
     color: white;
 }
+
+/* Chat Display */
+.chat-display {
+    position: absolute;
+    left: 25px;
+    bottom: 17px;
+    width: 829px;
+    height: 182px;
+    border-radius: 30px;
+}
+/* Chat Display Background */
+.chat-display-background {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0.8;
+    background-color: #1a1a1a;
+}
