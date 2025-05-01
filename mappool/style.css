@@ -1,1 +1,11 @@
 .main { background-image: url("static/background.png") }
+
+/* Round Name */
+.round-name {
+    position: absolute;
+    top: 34px;
+    right: 30px;
+    font-size: 30px;
+    letter-spacing: 3px;
+    color: white;
+}
