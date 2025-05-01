@@ -1,0 +1,21 @@
+@font-face {
+    font-family: "Baskerville BT";
+    src: url("../fonts/Baskerville\ BT\ Bold.ttf");
+    font-weight: 700;
+}
+
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    font-family: "Baskerville BT";
+    font-weight: 700;
+}
