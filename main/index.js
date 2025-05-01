@@ -158,6 +158,7 @@ socket.onmessage = event => {
         }
 
         // Set displays
+        let barWidth
         const currentScoreDelta = Math.abs(currentLeftScore - currentRightScore)
         if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "combo") {
             // Set Display
@@ -175,7 +176,7 @@ socket.onmessage = event => {
             animation.rightMiss.update(0)
 
             // Bar Width
-            const barWidth = Math.min(currentScoreDelta / 50 * 898, 898)
+            barWidth = Math.min(currentScoreDelta / 50 * 898, 898)
         } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
             // Set Display
             leftScoreEl.style.opacity = 0
@@ -192,7 +193,7 @@ socket.onmessage = event => {
             animation.rightMiss.update(currentRightScore)
 
             // Bar Width
-            const barWidth = Math.min(currentScoreDelta / 20 * 898, 898)
+            barWidth = Math.min(currentScoreDelta / 20 * 898, 898)
         } else {
             // Set Display
             leftScoreEl.style.opacity = 1
@@ -209,7 +210,7 @@ socket.onmessage = event => {
             animation.rightMiss.update(0)
 
             // Bar Width
-            const barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
+            barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
         }
 
         // Score Bar - Set who is winning

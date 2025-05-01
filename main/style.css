@@ -6,6 +6,8 @@
     --team-star-horizontal-alignment: 121px;
     --score-container-horizontal-alignment: 467px;
     --lela-ms-paint-horizontal-alignment: -5px;
+    --now-playing-width: 1500px;
+    --now-playing-left-section-width: 463px;
 }
 
 video {
@@ -165,7 +167,7 @@ video {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 1600px;
+    width: var(--now-playing-width);
     height: 80px;
     background-color: #0a0a0a;
     color: white;
@@ -186,7 +188,7 @@ video {
 /* Now Playing Left Section */
 .now-playing-left-section {
     position: absolute;
-    width: 463px;
+    width: var(--now-playing-left-section-width);
     height: 100%;
 }
 .now-playing-artist-title-difficulty {
@@ -216,7 +218,7 @@ video {
 .now-playing-length { right: 10%; }
 /* Now Playing Other Stats */
 .now-playing-stats-container {
-    left: 981.5px;
+    left: calc(var(--now-playing-left-section-width) + (var(--now-playing-width) - var(--now-playing-left-section-width)) / 2);
     transform: translateX(-50%);
     display: flex;
     gap: 70px;
