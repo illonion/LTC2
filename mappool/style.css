@@ -9,3 +9,14 @@
     letter-spacing: 3px;
     color: white;
 }
+
+/* Border */
+.border {
+    position: absolute;
+    width: 1920px;
+    height: 0px;
+    border: 3px solid #fff5d5;
+}
+.top-border { top: 100px; }
+.middle-border { top: 481px; }
+.bottom-border { top: 856px; }

@@ -18,4 +18,5 @@ video {
     height: 1080px;
     font-family: "Baskerville BT";
     font-weight: 700;
+    overflow: hidden;
 }
