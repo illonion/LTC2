@@ -154,3 +154,66 @@
     line-height: 46px;
     color: var(--ban-colour);
 }
+
+/* Team Pick Container */
+.team-pick-container {
+    position: absolute;
+    top: 50%;
+    left: 607px;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 17px;
+    width: 1285px;
+}
+
+/* Team Pick Wrapper */
+.team-pick-wrapper {
+    position: relative;
+    flex-grow: 1;
+    height: 321px;
+    border-radius: 44px;
+}
+.left-team-pick-container .team-pick-wrapper { background-color: #2a5841; }
+.right-team-pick-container .team-pick-wrapper { background-color: #263573; }
+
+/* Team Pick Wrapper Outline */
+.team-pick-outline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    outline-offset: -5px;
+}
+.left-team-pick-outline { outline: 5px solid #c3ff88; }
+.right-team-pick-outline { outline: 5px solid #4a67dd; }
+
+/* Team Pick Background Image */
+.team-pick-background-image {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background-image: url("https://assets.ppy.sh/beatmaps/2134656/covers/cover.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+}
+
+/* Team Pick Winner Crown */
+.team-pick-winner-crown {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Team Pick Mod Id */
+.team-pick-mod-id {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: white;
+}
