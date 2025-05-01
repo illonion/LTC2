@@ -50,3 +50,30 @@
     left: 25px;
     top: 6px;
 }
+
+/* Team Name */
+.team-name {
+    position: absolute;
+    top: 22px;
+    left: 167px;
+    width: 456px;
+    font-size: 70px;
+    line-height: 72px;
+    color: #ffffff;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+}
+
+/* Team Horizontal Rule */
+.team-horizointal-rule {
+    position: absolute;
+    top: 180px;
+    width: 1920px;
+    height: 48px;
+}
+.left-team-horizontal-rule { background-color: #3e815f; }
+.right-team-horizontal-rule { background-color: #b9ddff; }
