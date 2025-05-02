@@ -246,6 +246,7 @@
 .sidebar-section {
     width: inherit;
     padding: 20px 0;
+    border-bottom: 2px solid white;
 }
 .sidebar-title {
     width: inherit;
@@ -254,6 +255,13 @@
     color: white;
     font-weight: 700;
     font-size: 32px;
+}
+.sidebar-text {
+    width: inherit;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 .sidebar-button-container {
     display: flex;
@@ -275,4 +283,8 @@
 .sidebar-button-container button:active {
     color: #449071;
     background-color: white;
+}
+
+.preload-images {
+    opacity: 0;
 }

@@ -230,22 +230,42 @@
 .sidebar-section {
     width: inherit;
     padding: 20px 0;
+    border-bottom: 2px solid white;
+}
+.sidebar-title {
+    width: inherit;
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+    font-weight: 700;
+    font-size: 32px;
+}
+.sidebar-text {
+    width: inherit;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 .sidebar-button-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    gap: 10px;
 }
 .sidebar-button-container button {
-    width: 200px;
+    width: 100px;
     height: 50px;
     font-family: inherit;
-    font-weight: inherit;
+    font-weight: 700;
     background-color: transparent;
     color: white;
     font-size: 20px;
     border: 3px solid white;
     border-radius: 20px;
+}
+.sidebar-button-container button.full-length-button {
+    width: 210px;
 }
 .sidebar-button-container button:active {
     color: #449071;

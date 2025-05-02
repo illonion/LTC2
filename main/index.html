@@ -76,7 +76,16 @@
     <div class="sidebar">
         <div class="sidebar-section">
             <div class="sidebar-button-container">
-                <button onclick="startVisualiser()">Start Visualiser</button>
+                <button onclick="startVisualiser()" class="full-length-button">Start Visualiser</button>
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Set Current Picker</div>
+            <div class="sidebar-text" id="sidebar-current-picker">None</div>
+            <div class="sidebar-button-container">
+                <button onclick="setCurrentPicker('red', 'Left')">Left</button>
+                <button onclick="setCurrentPicker('blue', 'Right')">Right</button>
+                <button onclick="setCurrentPicker('none', 'None')">None</button>
             </div>
         </div>
     </div>

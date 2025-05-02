@@ -1,12 +1,16 @@
 // Get Beatmaps
 const roundNameEl = document.getElementById("round-name")
+const sidebarMappoolContainerEl = document.getElementById("sidebar-mappool-container")
+const preloadImagesEl = document.getElementById("preload-images")
 let currentBestOf, currentFirstTo, currentLeftStars = 0, currentRightStars = 0
 let allBeatmaps
 /**
  * Get all beatmaps from the beatmaps.json file
  * Set the round name
- * Set the ebst of and first to
+ * Set the best of and first to
+ * Create panels
  * Call create star display function
+ * Create sidebar mappool buttons
  */
 async function getBeatmaps() {
     const response = await fetch("../_data/beatmaps.json")
@@ -50,8 +54,96 @@ async function getBeatmaps() {
     }
 
     createStarDisplay()
+
+    for (let i = 0; i < allBeatmaps.length; i++) {
+        preloadImagesEl.setAttribute("srx", `https://assets.ppy.sh/beatmaps/${allBeatmaps[i].beatmapset_id}/covers/cover.jpg`)
+        const button = document.createElement("button")
+        button.innerText = `${allBeatmaps[i].mod}${allBeatmaps[i].order}`
+        button.setAttribute("id", allBeatmaps[i].beatmap_id)
+        button.dataset.id = allBeatmaps[i].beatmap_id
+        button.addEventListener("mousedown", mapClickEvent)
+        button.addEventListener("contextmenu", event => event.preventDefault())
+        sidebarMappoolContainerEl.append(button)
+    }
 }
 getBeatmaps()
+
+// Find beatmap
+const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.beatmap_id) === Number(beatmapId))
+
+// Team Ban Container
+const leftTeamBanContainerEl = document.getElementById("left-team-ban-container")
+const rightTeamBanCotnainerEl = document.getElementById("right-team-ban-container")
+// Team Pick Container
+const leftTeamPickContainerEl = document.getElementById("left-team-pick-container")
+const rightTeamPickContainerEl = document.getElementById("right-team-pick-container")
+let currentPickTile
+// Map Click Event
+function mapClickEvent(event) {
+    // Find map
+    const currentMapId = this.dataset.id
+    console.log(currentMapId)
+    const currentMap = findBeatmapById(currentMapId)
+    console.log(currentMap)
+    if (!currentMap) return
+
+    // Team
+    let team
+    if (event.button === 0) team = "red"
+    else if (event.button === 2) team = "blue"
+    if (!team) return
+
+    // Action
+    let action = "pick"
+    if (event.ctrlKey) action = "ban"
+
+    console.log(action, team)
+
+    if (action === "ban") {
+
+        const currentContainer = team === "red" ? leftTeamBanContainerEl : rightTeamBanCotnainerEl
+        
+        // Check container size
+        if (currentContainer.childElementCount < 2) {
+            const teamBanWrapper = document.createElement("div")
+            teamBanWrapper.classList.add("team-ban-wrapper")
+
+            const teamBanBackgroundImage = document.createElement("div")
+            teamBanBackgroundImage.classList.add("team-ban-background-image")
+            teamBanBackgroundImage.style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+
+            const teamBanModId = document.createElement("team-ban-mod-id")
+            teamBanModId.classList.add("team-ban-mod-id")
+            teamBanModId.innerText = `${currentMap.mod}${currentMap.order}`
+
+            teamBanWrapper.append(teamBanBackgroundImage, teamBanModId)
+            currentContainer.append(teamBanWrapper)
+        } else {
+            currentContainer.children[1].children[0].style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+            currentContainer.children[1].children[1].innerText = `${currentMap.mod}${currentMap.order}`
+        }
+    }
+
+    if (action === "pick") {
+        const currentContainer = team === "red" ? leftTeamPickContainerEl : rightTeamPickContainerEl
+
+        // Get current tile
+        let currentTile
+        for (let i = 0; i < currentContainer.childElementCount; i++) {
+            if (currentContainer.children[i].hasAttribute("data-id")) continue
+            currentTile = currentContainer.children[i]
+            break
+        }
+        if (!currentTile) return
+
+        currentPickTile = currentTile
+        currentTile.dataset.id = currentMap.beatmap_id
+        currentTile.children[0].style.backgroundImage =  `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+        currentTile.children[3].innerText = `${currentMap.mod}${currentMap.order}`
+
+        document.cookie = `currentPicker=${team}; path=/`
+    }
+}
 
 // Team Stars
 const leftTeamStarContainerEl = document.getElementById("left-team-star-container")
@@ -107,6 +199,9 @@ function updateStarCount(team, action) {
     if (currentRightStars < 0) currentRightStars = 0
 
     createStarDisplay()
+
+    document.cookie = `currentLeftStars=${currentLeftStars}; path=/`
+    document.cookie = `currentRightStars=${currentRightStars}; path=/`
 }
 
 // Team Names
@@ -118,7 +213,6 @@ let leftTeamName, rightTeamName
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
     const data = JSON.parse(event.data)
-    console.log(data)
 
     // Teams
     if (leftTeamName !== data.tourney.team.left) {

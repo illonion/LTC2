@@ -29,7 +29,7 @@ async function getBeatmaps() {
 getBeatmaps()
 
 // Find beatmap
-const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.beatmapId) === beatmapId)
+const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.beatmap_id) === beatmapId)
 
 // Team Stars
 const leftTeamStarContainerEl = document.getElementById("left-team-star-container")
@@ -331,4 +331,28 @@ function displayLength(second) {
 let visualiserResume = false
 function startVisualiser() {
     visualiserResume = true
+}
+
+setInterval(() => {
+    // Set stars
+    currentLeftStars = Number(getCookie("currentLeftStars"))
+    currentRightStars = Number(getCookie("currentRightStars"))
+    createStarDisplay()
+
+    // Set current picker
+    currentPicker = getCookie("currentPicker")
+    setCurrentPicker(currentPicker, currentPicker === "red"? "Left" : currentPicker === "blue"? "Right" : "None")
+}, 200)
+
+// Set current picker
+const sidebarCurrentPickerEl = document.getElementById("sidebar-current-picker")
+let currentPicker
+function setCurrentPicker(picker, text) {
+    sidebarCurrentPickerEl.innerText = text
+    currentPicker = picker
+    document.cookie = `currentPicker=${picker}; path=/`
+
+    if (currentPicker === "red") barColour = "#c3ff88"
+    else if (currentPicker === "blue") barColour = "#b9ddff"
+    else barColour = "#cccccc"
 }
