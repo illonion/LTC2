@@ -1,9 +1,9 @@
 :root {
     --ban-colour: #ff8888;
+    --green: #c3ff88;
+    --blue: #4a67dd;
     --banner-horizontal-alignment: 500px;
 }
-
-.main { background-image: url("static/background.png") }
 
 /* Round Name */
 .round-name {
@@ -82,7 +82,7 @@
 /* Team Star Container */
 .team-star-container {
     position: absolute;
-    top: 182px;
+    top: 184px;
     left: 168px;
     display: flex;
     gap: 20px;
@@ -137,7 +137,6 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background-image: url("https://assets.ppy.sh/beatmaps/2134656/covers/cover.jpg");
     background-size: cover;
     background-position: center;
     opacity: 0.2;
@@ -194,7 +193,6 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background-image: url("https://assets.ppy.sh/beatmaps/2134656/covers/cover.jpg");
     background-size: cover;
     background-position: center;
     opacity: 0.4;

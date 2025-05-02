@@ -130,15 +130,15 @@ socket.onmessage = event => {
     }
 
     // Score visibility
-    // if (scoreVisibility !== data.tourney.scoreVisible) {
-    //     scoreVisibility = data.tourney.scoreVisible
+    if (scoreVisibility !== data.tourney.scoreVisible) {
+        scoreVisibility = data.tourney.scoreVisible
 
-    //     if (scoreVisibility) {
-    //         scoreVisibilityEl.style.opacity = 1
-    //     } else {
-    //         scoreVisibilityEl.style.opacity = 0
-    //     }
-    // }
+        if (scoreVisibility) {
+            scoreVisibilityEl.style.opacity = 1
+        } else {
+            scoreVisibilityEl.style.opacity = 0
+        }
+    }
 
     // Scores
     if (scoreVisibility) {

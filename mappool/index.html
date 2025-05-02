@@ -21,9 +21,9 @@
         <div class="team-section left-team-section">
             <div class="team-section-overlay left-team-section-overlay"></div>
             <img class="banner left-team-banner" src="static/green banner.png">
-            <div class="team-name">Long Team Name Hello Its</div>
+            <div class="team-name" id="left-team-name">Long Team Name Hello Its</div>
             <div class="team-horizointal-rule left-team-horizontal-rule"></div>
-            <div class="team-star-container left-team-star-container"></div>
+            <div class="team-star-container left-team-star-container" id="left-team-star-container"></div>
             <img class="team-ban-image" src="static/green ban.png">
             <div class="team-ban-container">
                 <div class="team-ban-wrapper">
@@ -31,39 +31,14 @@
                     <div class="team-ban-mod-id">NM1</div>
                 </div>
             </div>
-            <div class="team-pick-container left-team-pick-container">
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                    <div class="team-pick-outline right-team-pick-outline"></div>
-                    <img class="team-pick-winner-crown" src="static/blue crown.png">
-                    <div class="team-pick-mod-id">NM1</div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-                <div class="team-pick-wrapper">
-                    <div class="team-pick-background-image"></div>
-                </div>
-            </div>
+            <div class="team-pick-container left-team-pick-container" id="left-team-pick-container"></div>
         </div>
         <div class="team-section right-team-section">
             <div class="team-section-overlay right-team-section-overlay"></div>
             <img class="banner right-team-banner" src="static/blue banner.png">
-            <div class="team-name">Long Team Name Hello Its</div>
+            <div class="team-name" id="right-team-name">Long Team Name Hello Its</div>
             <div class="team-horizointal-rule right-team-horizontal-rule"></div>
-            <div class="team-star-container right-team-star-container"></div>
+            <div class="team-star-container right-team-star-container" id="right-team-star-container"></div>
             <img class="team-ban-image" src="static/blue ban.png">
             <div class="team-ban-container">
                 <div class="team-ban-wrapper">
@@ -75,12 +50,7 @@
                     <div class="team-ban-mod-id">NM1</div>
                 </div>
             </div>
-            <div class="team-pick-container right-team-pick-container">
-                <div class="team-pick-wrapper"></div>
-                <div class="team-pick-wrapper"></div>
-                <div class="team-pick-wrapper"></div>
-                <div class="team-pick-wrapper"></div>
-            </div>
+            <div class="team-pick-container right-team-pick-container" id="right-team-pick-container"></div>
         </div>
 
         <!-- Borders -->
@@ -99,6 +69,8 @@
         </video>
     </div>
 
+    <script src="../_shared/deps/reconnecting-websocket.min.js"></script>
+    <script src="../_shared/utils.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
