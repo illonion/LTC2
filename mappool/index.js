@@ -90,6 +90,25 @@ function createStarDisplay() {
     }
 }
 
+/**
+ * Updates the star count
+ * @param {string} team - Left or right side
+ * @param {string} action - Plus or minus
+ */
+function updateStarCount(team, action) {
+    if (team === "red" && action === "plus") currentLeftStars++
+    else if (team === "red" && action === "minus") currentLeftStars--
+    else if (team === "blue" && action === "plus") currentRightStars++
+    else if (team === "blue" && action === "minus") currentRightStars--
+
+    if (currentLeftStars > currentFirstTo) currentLeftStars = currentFirstTo
+    if (currentLeftStars < 0) currentLeftStars = 0
+    if (currentRightStars > currentFirstTo) currentRightStars = currentFirstTo
+    if (currentRightStars < 0) currentRightStars = 0
+
+    createStarDisplay()
+}
+
 // Team Names
 const leftTeamNameEl = document.getElementById("left-team-name")
 const rightTeamNameEl = document.getElementById("right-team-name")

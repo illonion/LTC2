@@ -69,6 +69,19 @@
         </video>
     </div>
 
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Star Control</div>
+            <div class="sidebar-button-container">
+                <button onclick="updateStarCount('red','minus')">Red --</button>
+                <button onclick="updateStarCount('red','plus')">Red ++</button>
+                <button onclick="updateStarCount('blue','minus')">Blue --</button>
+                <button onclick="updateStarCount('blue','plus')">Blue ++</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../_shared/deps/reconnecting-websocket.min.js"></script>
     <script src="../_shared/utils.js"></script>
     <script src="index.js"></script>
