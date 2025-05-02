@@ -185,8 +185,8 @@
     border-radius: inherit;
     outline-offset: -5px;
 }
-.left-team-pick-outline { outline: 5px solid #c3ff88; }
-.right-team-pick-outline { outline: 5px solid #4a67dd; }
+.left-team-pick-outline { outline: 5px solid var(--green); }
+.right-team-pick-outline { outline: 5px solid var(--blue); }
 
 /* Team Pick Background Image */
 .team-pick-background-image {
@@ -218,12 +218,8 @@
 
 /* Chat Display */
 .chat-display {
-    position: absolute;
     left: 25px;
     bottom: 17px;
-    width: 829px;
-    height: 182px;
-    border-radius: 30px;
 }
 /* Chat Display Background */
 .chat-display-background {
@@ -233,6 +229,43 @@
     opacity: 0.8;
     background-color: #1a1a1a;
 }
+/* Chat Display Wrapper */
+.chat-display-wrapper {
+    --alignment: 10px;
+    position: absolute;
+    left: var(--alignment);
+    top: var(--alignment);
+    width: calc(100% - var(--alignment) * 2);
+    height: calc(100% - var(--alignment) * 2);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    justify-content: end;
+}
+.message-container {
+    width: 100%;
+    padding: 1px 2px;
+    display: flex;
+    width: inherit;
+    color: white;
+}
+.message-time {
+    width: 8%;
+    text-align: center;
+}
+.message-wrapper {
+    width: 92%;
+    display: flex;
+}
+.message-name {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+.unknown { color: yellow; }
+.bot { color: pink; }
+.left { color: var(--green); }
+.right { color: var(#b9ddff); }
 
 /* Sidebar */
 .sidebar {

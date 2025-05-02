@@ -20,3 +20,63 @@ video {
     font-weight: 700;
     overflow: hidden;
 }
+
+/* Chat Display */
+.chat-display {
+    position: absolute;
+    width: 829px;
+    height: 182px;
+    border-radius: 30px;
+    overflow: hidden;
+    opacity: 1;
+    transition: 500ms ease-in-out;
+}
+/* Chat Display Background */
+.chat-display-background {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0.8;
+    background-color: #1a1a1a;
+}
+/* Chat Display Wrapper */
+.chat-display-wrapper {
+    --alignment: 10px;
+    position: absolute;
+    left: var(--alignment);
+    top: var(--alignment);
+    width: calc(100% - var(--alignment) * 2);
+    height: calc(100% - var(--alignment) * 2);
+    overflow-y: scroll;
+}
+.chat-display-wrapper::-webkit-scrollbar {
+    display: none;
+}
+/* Message Container */
+.message-container {
+    width: 100%;
+    padding: 1px 2px;
+    display: flex;
+    color: white;
+    font-size: 20px;
+}
+/* Message Time */
+.message-time {
+    width: 8%;
+    text-align: center;
+}
+/* Message Wrapper */
+.message-wrapper {
+    width: 92%;
+    display: flex;
+}
+/* Message Name */
+.message-name {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+/* Name Colours */
+.unknown { color: yellow; }
+.bot { color: pink; }
+.left { color: var(--green); }
+.right { color: var(#b9ddff); }

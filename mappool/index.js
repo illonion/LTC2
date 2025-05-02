@@ -209,6 +209,9 @@ const leftTeamNameEl = document.getElementById("left-team-name")
 const rightTeamNameEl = document.getElementById("right-team-name")
 let leftTeamName, rightTeamName
 
+const chatDisplayWrapperEl = document.getElementById("chat-display-wrapper")
+let chatLen
+
 // Socket
 const socket = createTosuWsSocket()
 socket.onmessage = event => {
@@ -222,5 +225,47 @@ socket.onmessage = event => {
     if (rightTeamName !== data.tourney.team.right) {
         rightTeamName = data.tourney.team.right
         rightTeamNameEl.innerText = rightTeamName
+    }
+
+    // This is also mostly taken from Victim Crasher: https://github.com/VictimCrasher/static/tree/master/WaveTournament
+    if (chatLen !== data.tourney.chat.length) {
+        (chatLen === 0 || chatLen > data.tourney.chat.length) ? (chatDisplayWrapperEl.innerHTML = "", chatLen = 0) : null
+        const fragment = document.createDocumentFragment()
+
+        for (let i = chatLen; i < data.tourney.chat.length; i++) {
+            const chatColour = data.tourney.chat[i].team
+
+            // Chat message container
+            const chatMessageContainer = document.createElement("div")
+            chatMessageContainer.classList.add("message-container")
+
+            // Time
+            const chatDisplayTime = document.createElement("div")
+            chatDisplayTime.classList.add("message-time")
+            chatDisplayTime.innerText = data.tourney.chat[i].timestamp
+
+            // Whole Message
+            const chatDisplayWholeMessage = document.createElement("div")
+            chatDisplayWholeMessage.classList.add("message-wrapper")  
+
+            // Name
+            const chatDisplayName = document.createElement("span")
+            chatDisplayName.classList.add("message-name")
+            chatDisplayName.classList.add(chatColour)
+            chatDisplayName.innerText = data.tourney.chat[i].name + ": ";
+
+            // Message
+            const chatDisplayMessage = document.createElement("span")
+            chatDisplayMessage.classList.add("message-content")
+            chatDisplayMessage.innerText = data.tourney.chat[i].message
+
+            chatDisplayWholeMessage.append(chatDisplayName, chatDisplayMessage)
+            chatMessageContainer.append(chatDisplayTime, chatDisplayWholeMessage)
+            fragment.append(chatMessageContainer)
+        }
+
+        chatDisplayWrapperEl.append(fragment)
+        chatLen = data.tourney.chat.length
+        chatDisplayWrapperEl.scrollTop = chatDisplayWrapperEl.scrollHeight
     }
 }

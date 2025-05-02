@@ -218,6 +218,13 @@
     height: 100%;
 }
 
+/* Chat Display */
+.chat-display {
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /* Sidebar */
 .sidebar {
     position: absolute;
