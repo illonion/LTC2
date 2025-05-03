@@ -335,6 +335,35 @@
     height: 1080px;
     background-color: white;
 }
+/* Sidebar Select */
+.sidebar-select {
+    width: 250px;
+    text-align: center;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: 20px;
+    background-color: transparent;
+    color: white;
+    margin-bottom: 20px;
+}
+.sidebar-select::-webkit-scrollbar { display: none; }
+.sidebar-select option { 
+    line-height: 20px;
+}
+/* Mappool Management Button Container */
+.sidebar-mappool-management-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+.sidebar-mappool-management-button-container > * {
+    width: 70px;
+}
 
 .preload-images {
     opacity: 0;
