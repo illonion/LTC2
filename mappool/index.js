@@ -556,6 +556,64 @@ function mappoolManagementSetAction() {
 
             mappoolManagementSystemEl.append( whichMapTitle, mappoolManagementWhichMapButtonContainer)
         }
+    } 
+    // Set Pick
+    if (mappoolManagementAction === "setWinner" || mappoolManagementAction === "removeWinner") {
+        // Whose Pick Title
+        const whosePickTitle = document.createElement("div")
+        whosePickTitle.classList.add("sidebar-title")
+        whosePickTitle.innerText = "Whose Pick?"
+
+        // Create select 
+        const mappoolManagementWhosePickSelect = document.createElement("select")
+        mappoolManagementWhosePickSelect.classList.add("sidebar-select")
+        mappoolManagementWhosePickSelect.setAttribute("id", "mappool-management-set-whose-pick")
+        mappoolManagementWhosePickSelect.setAttribute("size", (currentFirstTo - 1) * 2)
+        mappoolManagementWhosePickSelect.setAttribute("onchange", "mappoolManagementSetWhosePick()")
+
+        // Create options
+        for (i = 0; i < leftTeamPickContainerEl.childElementCount; i++) {
+            const mappoolManagementWhosePickOption = document.createElement("option")
+            mappoolManagementWhosePickOption.setAttribute("value", `green|${i}`)
+            if (leftTeamPickContainerEl.children[i].hasAttribute("data-id")) mappoolManagementWhosePickOption.innerText = `Green Pick ${i + 1} - ${leftTeamPickContainerEl.children[i].children[3].innerText}`
+            else mappoolManagementWhosePickOption.innerText = `Green Pick ${i + 1}`
+
+            mappoolManagementWhosePickSelect.append(mappoolManagementWhosePickOption)
+        }
+        for (i = 0; i < rightTeamPickContainerEl.childElementCount; i++) {
+            const mappoolManagementWhosePickOption = document.createElement("option")
+            mappoolManagementWhosePickOption.setAttribute("value", `blue|${i}`)
+            if (rightTeamPickContainerEl.children[i].hasAttribute("data-id")) mappoolManagementWhosePickOption.innerText = `Blue Pick ${i + 1} - ${rightTeamPickContainerEl.children[i].children[3].innerText}`
+            else mappoolManagementWhosePickOption.innerText = `Blue Pick ${i + 1}`
+
+            mappoolManagementWhosePickSelect.append(mappoolManagementWhosePickOption)
+        }
+
+        mappoolManagementSystemEl.append( whosePickTitle, mappoolManagementWhosePickSelect)
+
+        if (mappoolManagementAction === "setWinner") {
+            // Which Map?
+            const whichTeamTitle = document.createElement("div")
+            whichTeamTitle.classList.add("sidebar-title")
+            whichTeamTitle.innerText = "Which Team?"
+
+            const mappoolManagementWhichTeamContainer = document.createElement("select")
+            mappoolManagementWhichTeamContainer.classList.add("sidebar-select")
+            mappoolManagementWhichTeamContainer.setAttribute("id", "mappool-management-set-which-team")
+            mappoolManagementWhichTeamContainer.setAttribute("onchange", "mappoolManagementSetWhichTeam()")
+            mappoolManagementWhichTeamContainer.setAttribute("size", 2)
+
+            const mappoolManagementWhichTeamOptionOne = document.createElement("option")
+            mappoolManagementWhichTeamOptionOne.setAttribute("value", "green")
+            mappoolManagementWhichTeamOptionOne.innerText = "Green"
+            const mappoolManagementWhichTeamOptionTwo = document.createElement("option")
+            mappoolManagementWhichTeamOptionTwo.setAttribute("value", "blue")
+            mappoolManagementWhichTeamOptionTwo.innerText = "Blue"
+
+            mappoolManagementWhichTeamContainer.append(mappoolManagementWhichTeamOptionOne, mappoolManagementWhichTeamOptionTwo)
+
+            mappoolManagementSystemEl.append( whichTeamTitle, mappoolManagementWhichTeamContainer)
+        }
     }
 
     // Apply Changes Button
@@ -578,6 +636,12 @@ function mappoolManagementSetAction() {
             break
         case "removePick":
             applyChangesButton.addEventListener("click", mappoolManagementRemovePick)
+            break
+        case "setWinner":
+            applyChangesButton.addEventListener("click", mappoolManagementSetWinner)
+            break
+        case "removeWinner":
+            applyChangesButton.addEventListener("click", mappoolManagementRemoveWinner)
             break
     }
     
@@ -790,4 +854,39 @@ function mappoolManagementRemovePick() {
     currentTile.children[1].classList.remove("right-team-pick-outline")
     currentTile.children[2].setAttribute("src", "")
     currentTile.children[3].innerText = ""
+}
+
+// Mappool Management Set Which Team
+let mappoolManagementSetWhichTeamTeam
+function mappoolManagementSetWhichTeam() {
+    mappoolManagementSetWhichTeamTeam = document.getElementById("mappool-management-set-which-team").value
+}
+
+// Mappool Managemnt Set Winner
+function mappoolManagementSetWinner() {
+    if (mappoolManagementSetWhosePickTeam === undefined || mappoolManagementSetWhosePickNumber === undefined || mappoolManagementSetWhichTeamTeam === undefined) return
+
+    // Find which container
+    const currentContainer = mappoolManagementSetWhosePickTeam === "green"? leftTeamPickContainerEl : rightTeamPickContainerEl
+    if (!currentContainer) return
+    const currentTile = currentContainer.children[mappoolManagementSetWhosePickNumber]
+
+    currentTile.children[1].classList.add(`${mappoolManagementSetWhichTeamTeam === "green"? "left" : "right"}-team-pick-outline`)
+    currentTile.children[1].classList.remove(`${mappoolManagementSetWhichTeamTeam === "green"? "right" : "left"}-team-pick-outline`)
+    currentTile.children[2].setAttribute("src", `static/${mappoolManagementSetWhichTeamTeam} crown.png`)
+}
+
+// Mappool Managemnt Set Winner
+function mappoolManagementRemoveWinner() {
+    if (mappoolManagementSetWhosePickTeam === undefined || mappoolManagementSetWhosePickNumber === undefined) return
+
+    // Find which container'
+    const currentContainer = mappoolManagementSetWhosePickTeam === "green"? leftTeamPickContainerEl : rightTeamPickContainerEl
+    if (!currentContainer) return
+    const currentTile = currentContainer.children[mappoolManagementSetWhosePickNumber]
+
+    currentTile.children[1].classList.remove("left-team-pick-outline")
+    currentTile.children[1].classList.remove("right-team-pick-outline")
+    currentTile.children[2].setAttribute("src", "")
+
 }
