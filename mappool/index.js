@@ -61,6 +61,8 @@ async function getBeatmaps() {
         button.innerText = `${allBeatmaps[i].mod}${allBeatmaps[i].order}`
         button.setAttribute("id", allBeatmaps[i].beatmap_id)
         button.dataset.id = allBeatmaps[i].beatmap_id
+        button.dataset.pickTeam = "false"
+        button.dataset.banTeam = "false"
         button.addEventListener("mousedown", mapClickEvent)
         button.addEventListener("contextmenu", event => event.preventDefault())
         sidebarMappoolContainerEl.append(button)
@@ -99,6 +101,8 @@ function mapClickEvent(event) {
 
     console.log(action, team)
 
+    if (this.dataset.pickTeam === "true" || this.dataset.banTeam === "true") return
+
     if (action === "ban") {
 
         const currentContainer = team === "red" ? leftTeamBanContainerEl : rightTeamBanCotnainerEl
@@ -118,9 +122,8 @@ function mapClickEvent(event) {
 
             teamBanWrapper.append(teamBanBackgroundImage, teamBanModId)
             currentContainer.append(teamBanWrapper)
-        } else {
-            currentContainer.children[1].children[0].style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
-            currentContainer.children[1].children[1].innerText = `${currentMap.mod}${currentMap.order}`
+
+            this.dataset.banTeam = "true"
         }
     }
 
@@ -142,6 +145,8 @@ function mapClickEvent(event) {
         currentTile.children[3].innerText = `${currentMap.mod}${currentMap.order}`
 
         document.cookie = `currentPicker=${team}; path=/`
+
+        this.dataset.pickTeam = "true"
     }
 }
 
@@ -209,8 +214,16 @@ const leftTeamNameEl = document.getElementById("left-team-name")
 const rightTeamNameEl = document.getElementById("right-team-name")
 let leftTeamName, rightTeamName
 
+// Chat stuff
 const chatDisplayWrapperEl = document.getElementById("chat-display-wrapper")
 let chatLen
+
+// Autopicking / beatmap stuff
+let mapId, mapChecksum
+
+// Scores
+let currentLeftScore, currentRightScore, currentLeftSecondaryScore, currentRightSecondaryScore
+let ipcState, checkedWinner = false
 
 // Socket
 const socket = createTosuWsSocket()
@@ -268,4 +281,130 @@ socket.onmessage = event => {
         chatLen = data.tourney.chat.length
         chatDisplayWrapperEl.scrollTop = chatDisplayWrapperEl.scrollHeight
     }
+
+    if (mapId !== data.beatmap.id || mapChecksum !== data.beatmap.checksum) {
+        mapId = data.beatmap.id
+        mapChecksum = data.beatmap.checksum
+
+        const currentMap = document.getElementById(mapId)
+
+        if (currentMap && currentMap.dataset.pickTeam === "false" && currentMap.dataset.banTeam === "false" && isAutopickOn && nextPicker) {
+            const event = new MouseEvent('mousedown', {
+                bubbles: true,
+                cancelable: true,
+                view: window,
+                button: (nextPicker === "blue")? 2 : 0,
+            })
+            currentMap.dispatchEvent(event)
+
+            if (nextPicker === "red") updateNextAutoPicker("blue")
+            else if (nextPicker === "blue") updateNextAutoPicker("red")
+        }
+    }
+
+    // Scores
+    if (ipcState === 2 || ipcState === 3) {
+        currentLeftScore = 0
+        currentRightScore = 0
+        currentLeftSecondaryScore = 0
+        currentRightSecondaryScore = 0
+
+        // Get scores for each team
+        for (let i = 0; i < data.tourney.clients.length; i++) {
+            const currentPlayerPlay = data.tourney.clients[i].play
+            if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "combo") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.combo.max : currentRightScore += currentPlayerPlay.combo.max
+                data.tourney.clients[i].team === "left"? currentLeftSecondaryScore += currentPlayerPlay.score : currentRightSecondaryScore += currentPlayerPlay.score
+            } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.hits["0"] : currentRightScore += currentPlayerPlay.hits["0"]
+                data.tourney.clients[i].team === "left"? currentLeftSecondaryScore += currentPlayerPlay.score : currentRightSecondaryScore += currentPlayerPlay.score
+            } else {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.score : currentRightScore += currentPlayerPlay.score
+            }
+        }
+    }
+
+    if (ipcState !== data.tourney.ipcState) {
+        ipcState = data.tourney.ipcState
+
+        if (ipcState !== 4) checkedWinner = false
+        if (ipcState === 4 && !checkedWinner) {
+            checkedWinner = true
+
+            if (!isStarOn) return
+            let winner = ""
+            if (currentMap.mod === "EX" && currentMap.score_method === "combo") {
+                if (currentLeftScore > currentRightScore) winner = "red"
+                else if (currentLeftScore < currentRightScore) winner = "blue"
+                else if (currentLeftSecondaryScore > currentRightSecondaryScore) winner = "red"
+                else if (currentLeftSecondaryScore < currentRightSecondaryScore) winner = "blue"
+            } else if (currentMap.mod === "EX" && currentMap.score_method === "miss") {
+                if (currentLeftScore < currentRightScore) winner = "red"
+                else if (currentLeftScore > currentRightScore) winner = "blue"
+                else if (currentLeftSecondaryScore > currentRightSecondaryScore) winner = "red"
+                else if (currentLeftSecondaryScore < currentRightSecondaryScore) winner = "blue"
+            } else {
+                if (currentLeftScore > currentRightScore) winner = "red"
+                else if (currentLeftScore < currentRightScore) winner = "blue"
+            }
+
+            if (!winner) return
+            updateStarCount(winner, "plus")
+
+            // Set winner on tile
+            if (!currentMap) return
+            currentMap.children[1].classList.add(`${winner === "red"? "green" : "blue"}-team-pick-outline`)
+            currentMap.children[1].classList.remove(`${winner === "red"? "blue" : "green"}-team-pick-outline`)
+            currentMap.children[2].setAttribute("src", `${winner === "red"? "green" : "blue"} crown.png`)
+
+            const teamPickWrapper = document.createElement("div")
+            teamPickWrapper.classList.add("team-pick-wrapper")
+            
+            const teamPickBackgroundImage = document.createElement("div")
+            teamPickBackgroundImage.classList.add("team-pick-background-image")
+    
+            const teamPickOutline = document.createElement("div")
+            teamPickOutline.classList.add("team-pick-outline")
+    
+            const teamPickWinnerCrown = document.createElement("img")
+            teamPickWinnerCrown.classList.add("team-pick-winner-crown")
+    
+            const teamPickModId = document.createElement("div")
+            teamPickModId.classList.add("team-pick-mod-id")
+        }
+    }
 }
+
+// Update next auto picker
+const nextAutopickerEl = document.getElementById("next-auto-picker-team")
+let nextPicker
+function updateNextAutoPicker(team) {
+    nextAutopickerEl.innerText = team === "red" ? "Left" : "Right"
+    nextPicker = team
+}
+
+// Toggle autopick
+const toggleAutopickEl = document.getElementById("toggle-autopick")
+let isAutopickOn = false
+function toggleAutopick() {
+    isAutopickOn = !isAutopickOn
+    toggleAutopickEl.innerText = `Toggle Autopick: ${isAutopickOn? "ON" : "OFF"}`
+}
+
+// Toggle Stars
+const toggleStarsEl = document.getElementById("toggle-stars")
+let isStarOn = true
+function toggleStars() {
+    isStarOn = !isStarOn
+    if (isStarOn) {
+        leftTeamStarContainerEl.style.display = "flex"
+        rightTeamStarContainerEl.style.display = "flex"
+        toggleStarsEl.innerText = "Toggle Stars: ON"
+    } else {
+        leftTeamStarContainerEl.style.display = "none"
+        rightTeamStarContainerEl.style.display = "none"
+        toggleStarsEl.innerText = "Toggle Stars: OFF"
+    }
+    document.cookie = `toggleStars=${isStarOn}; path=/`
+}
+document.cookie = `toggleStars=${isStarOn}; path=/`

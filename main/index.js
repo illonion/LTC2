@@ -391,6 +391,16 @@ setInterval(() => {
     // Set current picker
     currentPicker = getCookie("currentPicker")
     setCurrentPicker(currentPicker, currentPicker === "red"? "Left" : currentPicker === "blue"? "Right" : "None")
+
+    // Toggle Stars
+    const isStarOn = getCookie("toggleStars")
+    if (isStarOn === "true") {
+        leftTeamStarContainerEl.style.display = "flex"
+        rightTeamStarContainerEl.style.display = "flex"
+    } else if (isStarOn === "false") {
+        leftTeamStarContainerEl.style.display = "none"
+        rightTeamStarContainerEl.style.display = "none"
+    }
 }, 200)
 
 // Set current picker

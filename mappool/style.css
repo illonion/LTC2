@@ -272,9 +272,10 @@
     position: absolute;
     left: 1920px;
     top: 0;
-    width: 250px;
+    width: 500px;
     height: 1080px;
     background-color: #449071;
+    display: flex;
 }
 .sidebar-section {
     width: inherit;
@@ -313,8 +314,25 @@
     border: 3px solid white;
     border-radius: 20px;
 }
+.sidebar-button-container button.full-length-button {
+    width: 210px;
+}
 .sidebar-button-container button:active {
     color: #449071;
+    background-color: white;
+}
+/* Columns */
+.column {
+    width: 250px;
+    height: inherit;
+}
+/* Divider */
+.divider {
+    position: absolute;
+    top: 0;
+    left: 249px;
+    width: 2px;
+    height: 1080px;
     background-color: white;
 }
 
