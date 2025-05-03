@@ -73,6 +73,24 @@ getBeatmaps()
 // Find beatmap
 const findBeatmapById = beatmapId => allBeatmaps.find(beatmap => Number(beatmap.beatmap_id) === Number(beatmapId))
 
+// Create Ban Wrapper
+function createBanWrapper(currentMap, currentContainer) {
+    const teamBanWrapper = document.createElement("div")
+    teamBanWrapper.classList.add("team-ban-wrapper")
+    teamBanWrapper.dataset.id = currentMap.beatmap_id
+
+    const teamBanBackgroundImage = document.createElement("div")
+    teamBanBackgroundImage.classList.add("team-ban-background-image")
+    teamBanBackgroundImage.style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+
+    const teamBanModId = document.createElement("team-ban-mod-id")
+    teamBanModId.classList.add("team-ban-mod-id")
+    teamBanModId.innerText = `${currentMap.mod}${currentMap.order}`
+
+    teamBanWrapper.append(teamBanBackgroundImage, teamBanModId)
+    currentContainer.append(teamBanWrapper)
+}
+
 // Team Ban Container
 const leftTeamBanContainerEl = document.getElementById("left-team-ban-container")
 const rightTeamBanContainerEl = document.getElementById("right-team-ban-container")
@@ -99,8 +117,6 @@ function mapClickEvent(event) {
     let action = "pick"
     if (event.ctrlKey) action = "ban"
 
-    console.log(action, team)
-
     if (this.dataset.pickTeam === "true" || this.dataset.banTeam === "true") return
 
     if (action === "ban") {
@@ -109,21 +125,7 @@ function mapClickEvent(event) {
         
         // Check container size
         if (currentContainer.childElementCount < 2) {
-            const teamBanWrapper = document.createElement("div")
-            teamBanWrapper.dataset.id = currentMap.beatmap_id
-            teamBanWrapper.classList.add("team-ban-wrapper")
-
-            const teamBanBackgroundImage = document.createElement("div")
-            teamBanBackgroundImage.classList.add("team-ban-background-image")
-            teamBanBackgroundImage.style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
-
-            const teamBanModId = document.createElement("team-ban-mod-id")
-            teamBanModId.classList.add("team-ban-mod-id")
-            teamBanModId.innerText = `${currentMap.mod}${currentMap.order}`
-
-            teamBanWrapper.append(teamBanBackgroundImage, teamBanModId)
-            currentContainer.append(teamBanWrapper)
-
+            createBanWrapper(currentMap, currentContainer)
             this.dataset.banTeam = "true"
         }
     }
@@ -426,6 +428,8 @@ function mappoolManagementSetAction() {
     mappoolManagementSetWhoseBanTeam = undefined
     mappoolManagementSetWhoseBanNumber = undefined
     mappoolManagementSelectedMap = undefined
+    mappoolManagementSetWhosePickTeam = undefined
+    mappoolManagementSetWhosePickNumber = undefined
 
     // Set Ban
     if (mappoolManagementAction === "setBan" || mappoolManagementAction === "removeBan") {
@@ -498,6 +502,62 @@ function mappoolManagementSetAction() {
         }
     }
 
+    // Set Pick
+    if (mappoolManagementAction === "setPick" || mappoolManagementAction === "removePick") {
+        // Whose Pick Title
+        const whosePickTitle = document.createElement("div")
+        whosePickTitle.classList.add("sidebar-title")
+        whosePickTitle.innerText = "Whose Pick?"
+
+        // Create select 
+        const mappoolManagementWhosePickSelect = document.createElement("select")
+        mappoolManagementWhosePickSelect.classList.add("sidebar-select")
+        mappoolManagementWhosePickSelect.setAttribute("id", "mappool-management-set-whose-pick")
+        mappoolManagementWhosePickSelect.setAttribute("size", (currentFirstTo - 1) * 2)
+        mappoolManagementWhosePickSelect.setAttribute("onchange", "mappoolManagementSetWhosePick()")
+
+        // Create options
+        for (i = 0; i < leftTeamPickContainerEl.childElementCount; i++) {
+            const mappoolManagementWhosePickOption = document.createElement("option")
+            mappoolManagementWhosePickOption.setAttribute("value", `green|${i}`)
+            if (leftTeamPickContainerEl.children[i].hasAttribute("data-id")) mappoolManagementWhosePickOption.innerText = `Green Pick ${i + 1} - ${leftTeamPickContainerEl.children[i].children[3].innerText}`
+            else mappoolManagementWhosePickOption.innerText = `Green Pick ${i + 1}`
+
+            mappoolManagementWhosePickSelect.append(mappoolManagementWhosePickOption)
+        }
+        for (i = 0; i < rightTeamPickContainerEl.childElementCount; i++) {
+            const mappoolManagementWhosePickOption = document.createElement("option")
+            mappoolManagementWhosePickOption.setAttribute("value", `blue|${i}`)
+            if (rightTeamPickContainerEl.children[i].hasAttribute("data-id")) mappoolManagementWhosePickOption.innerText = `Blue Pick ${i + 1} - ${rightTeamPickContainerEl.children[i].children[3].innerText}`
+            else mappoolManagementWhosePickOption.innerText = `Blue Pick ${i + 1}`
+
+            mappoolManagementWhosePickSelect.append(mappoolManagementWhosePickOption)
+        }
+
+        mappoolManagementSystemEl.append( whosePickTitle, mappoolManagementWhosePickSelect)
+
+        if (mappoolManagementAction === "setPick") {
+            // Which Map?
+            const whichMapTitle = document.createElement("div")
+            whichMapTitle.classList.add("sidebar-title")
+            whichMapTitle.innerText = "Which Map?"
+
+            const mappoolManagementWhichMapButtonContainer = document.createElement("div")
+            mappoolManagementWhichMapButtonContainer.setAttribute("id", "mappool-management-which-ban-button-container")
+            mappoolManagementWhichMapButtonContainer.classList.add("sidebar-mappool-management-button-container")
+
+            for (let i = 0; i < allBeatmaps.length; i++) {
+                const mappoolManagementWhichMapButton = document.createElement("div")
+                mappoolManagementWhichMapButton.innerText = `${allBeatmaps[i].mod}${allBeatmaps[i].order}`
+                mappoolManagementWhichMapButton.addEventListener("click", mappoolManagementSetMap)
+                mappoolManagementWhichMapButton.dataset.id = allBeatmaps[i].beatmap_id
+                mappoolManagementWhichMapButtonContainer.append(mappoolManagementWhichMapButton)
+            }
+
+            mappoolManagementSystemEl.append( whichMapTitle, mappoolManagementWhichMapButtonContainer)
+        }
+    }
+
     // Apply Changes Button
     const applyChangesButtonContainer = document.createElement("div")
     applyChangesButtonContainer.classList.add("sidebar-button-container")
@@ -512,6 +572,12 @@ function mappoolManagementSetAction() {
             break
         case "removeBan":
             applyChangesButton.addEventListener("click", mappoolManagementRemoveBan)
+            break
+        case "setPick":
+            applyChangesButton.addEventListener("click", mappoolManagementSetPick)
+            break
+        case "removePick":
+            applyChangesButton.addEventListener("click", mappoolManagementRemovePick)
             break
     }
     
@@ -586,21 +652,7 @@ function mappoolManagementSetBan() {
 
     // If tile does not exist
     if (!tileExists) {
-        const teamBanWrapper = document.createElement("div")
-        teamBanWrapper.classList.add("team-ban-wrapper")
-        teamBanWrapper.dataset.id = currentMap.beatmap_id
-    
-        const teamBanBackgroundImage = document.createElement("div")
-        teamBanBackgroundImage.classList.add("team-ban-background-image")
-        teamBanBackgroundImage.style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
-    
-        const teamBanModId = document.createElement("team-ban-mod-id")
-        teamBanModId.classList.add("team-ban-mod-id")
-        teamBanModId.innerText = `${currentMap.mod}${currentMap.order}`
-    
-        teamBanWrapper.append(teamBanBackgroundImage, teamBanModId)
-        currentContainer.append(teamBanWrapper)
-    
+        createBanWrapper(currentMap, currentContainer)
         document.getElementById(currentMap.beatmap_id).dataset.banTeam = "true"
     } else {
         const currentTile = currentContainer.children[mappoolManagementSetWhoseBanNumber]
@@ -626,7 +678,6 @@ function mappoolManagementSetBan() {
 
 // Mappool Management Remove Ban
 function mappoolManagementRemoveBan() {
-    console.log(mappoolManagementSetWhoseBanTeam, mappoolManagementSetWhoseBanNumber)
     if (mappoolManagementSetWhoseBanTeam === undefined || mappoolManagementSetWhoseBanNumber === undefined) return
 
     // Find which container
@@ -651,4 +702,92 @@ function mappoolManagementRemoveBan() {
 
     // Remove tile
     currentTile.remove()
+}
+
+// Mappool Management Set Whose Pick
+let mappoolManagementSetWhosePickTeam
+let mappoolManagementSetWhosePickNumber
+function mappoolManagementSetWhosePick() {
+    const mappoolManagementSetWhosePickElValue = document.getElementById("mappool-management-set-whose-pick").value
+    const mappoolManagementSetWhosePickElValueSplit = mappoolManagementSetWhosePickElValue.split("|")
+    mappoolManagementSetWhosePickTeam = mappoolManagementSetWhosePickElValueSplit[0]
+    mappoolManagementSetWhosePickNumber = Number(mappoolManagementSetWhosePickElValueSplit[1])
+}
+
+// Mappool Management Set Pick
+function mappoolManagementSetPick() {
+    if (mappoolManagementSetWhosePickTeam === undefined || mappoolManagementSetWhosePickNumber === undefined || mappoolManagementSelectedMap === undefined) return
+
+    // Find which map
+    const currentMap = findBeatmapById(mappoolManagementSelectedMap)
+    if (!currentMap) return
+
+    // Find which container
+    const currentContainer = mappoolManagementSetWhosePickTeam === "green"? leftTeamPickContainerEl : rightTeamPickContainerEl
+    if (!currentContainer) return
+
+    // Find if ban number currently exists or not
+    let tileExists = false
+    if (currentContainer.children[mappoolManagementSetWhosePickNumber].hasAttribute("data-id")) tileExists = true
+
+    const currentTile = currentContainer.children[mappoolManagementSetWhosePickNumber]
+
+    if (tileExists) {
+        const previousMapId = currentTile.dataset.id
+
+        // Check if map is currently banned elsewhere
+        const mapCurrentlyBannedElsewhere = mapCurrentlyBannedElsewhereCheck(previousMapId, 0)
+        
+        // Check if map is currently picked elsewhere
+        const mapCurrentlyPickedElsewhere = mapCurrentlyPickedElsewhereCheck(previousMapId, 1)
+
+        // Set attributes depending on the above
+        const previousMapButton = document.getElementById(previousMapId)
+        previousMapButton.dataset.banTeam = mapCurrentlyBannedElsewhere? "true" : "false"
+        previousMapButton.dataset.pickTeam = mapCurrentlyPickedElsewhere? "true" : "false"
+
+        currentTile.dataset.id = currentMap.beatmap_id
+        currentTile.children[0].style.backgroundImage =  `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+        currentTile.children[3].innerText = `${currentMap.mod}${currentMap.order}`
+        document.getElementById(`${currentMap.beatmap_id}`).dataset.pickTeam = "true"
+    }
+
+    currentTile.dataset.id = currentMap.beatmap_id
+    currentTile.children[0].style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
+    currentTile.children[3].innerText = `${currentMap.mod}${currentMap.order}`
+    document.getElementById(`${currentMap.beatmap_id}`).dataset.pickTeam = "true"
+}
+
+function mappoolManagementRemovePick() {
+    if (mappoolManagementSetWhosePickTeam === undefined || mappoolManagementSetWhosePickNumber === undefined) return
+
+    // Find which container
+    const currentContainer = mappoolManagementSetWhosePickTeam === "green"? leftTeamPickContainerEl : rightTeamPickContainerEl
+    if (!currentContainer) return
+
+    // Find if ban number currently exists or not
+    let tileExists = false
+    if (currentContainer.children[mappoolManagementSetWhosePickNumber].hasAttribute("data-id")) tileExists = true
+    if (!tileExists) return
+
+    const currentTile = currentContainer.children[mappoolManagementSetWhosePickNumber]
+    const previousMapId = currentTile.dataset.id
+
+    // Check if map is currently banned elsewhere
+    const mapCurrentlyBannedElsewhere = mapCurrentlyBannedElsewhereCheck(previousMapId, 0)
+    
+    // Check if map is currently picked elsewhere
+    const mapCurrentlyPickedElsewhere = mapCurrentlyPickedElsewhereCheck(previousMapId, 1)
+
+    // Set attributes depending on the above
+    const previousMapButton = document.getElementById(previousMapId)
+    previousMapButton.dataset.banTeam = mapCurrentlyBannedElsewhere? "true" : "false"
+    previousMapButton.dataset.pickTeam = mapCurrentlyPickedElsewhere? "true" : "false"
+
+    currentTile.removeAttribute("data-id")
+    currentTile.children[0].style.backgroundImage = ""
+    currentTile.children[1].classList.remove("left-team-pick-outline")
+    currentTile.children[1].classList.remove("right-team-pick-outline")
+    currentTile.children[2].setAttribute("src", "")
+    currentTile.children[3].innerText = ""
 }

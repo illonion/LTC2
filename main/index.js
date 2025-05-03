@@ -75,7 +75,7 @@ let leftTeamName, rightTeamName
 
 // Score visibility
 const scoreVisibilityEl = document.getElementById("score-visible")
-let scoreVisibility = true
+let scoreVisibility
 
 // Score bar
 const leftScoreBarEl = document.getElementById("left-score-bar")
