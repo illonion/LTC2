@@ -428,21 +428,32 @@ function mappoolManagementSetAction() {
     mappoolManagementSelectedMap = undefined
 
     // Set Ban
-    if (mappoolManagementAction === "setBan") {
+    if (mappoolManagementAction === "setBan" || mappoolManagementAction === "removeBan") {
         // Whose Ban Title
         const whoseBanTitle = document.createElement("div")
         whoseBanTitle.classList.add("sidebar-title")
         whoseBanTitle.innerText = "Whose Ban?"
 
         // Get number of bans from each team
-        let currentLeftBanNumberTotal = Math.min(leftTeamBanContainerEl.childElementCount + 1, 2)
-        let currentRightBanNumberTotal = Math.min(rightTeamBanContainerEl.childElementCount + 1, 2)
+        let currentLeftBanNumberTotal = mappoolManagementAction === "setBan"? Math.min(leftTeamBanContainerEl.childElementCount + 1, 2) : leftTeamBanContainerEl.childElementCount
+        let currentRightBanNumberTotal = mappoolManagementAction === "setBan"? Math.min(rightTeamBanContainerEl.childElementCount + 1, 2) : rightTeamBanContainerEl.childElementCount
+
+        // If there are no bans (removeBan only)
+        if (currentLeftBanNumberTotal + currentRightBanNumberTotal === 0) {
+            const sidebarText = document.createElement("div")
+            sidebarText.classList.add("sidebar-text")
+            sidebarText.innerText = "Please set some bans first!"
+            mappoolManagementSystemEl.append(sidebarText)
+            return
+        }
 
         // Create select 
         const mappoolManagementWhoseBanSelect = document.createElement("select")
         mappoolManagementWhoseBanSelect.classList.add("sidebar-select")
         mappoolManagementWhoseBanSelect.setAttribute("id", "mappool-management-set-whose-ban")
-        mappoolManagementWhoseBanSelect.setAttribute("size", currentLeftBanNumberTotal + currentRightBanNumberTotal)
+        const totalBans = currentLeftBanNumberTotal + currentRightBanNumberTotal
+        const mappoolManagementWhoseBanSelectSize = (totalBans < 2 && mappoolManagementAction === "removeBan")? 2 : totalBans
+        mappoolManagementWhoseBanSelect.setAttribute("size", mappoolManagementWhoseBanSelectSize)
         mappoolManagementWhoseBanSelect.setAttribute("onchange", "mappoolManagementSetWhoseBan()")
         // Get Bans
         let i = 0
@@ -463,24 +474,28 @@ function mappoolManagementSetAction() {
             mappoolManagementWhoseBanSelect.append(mappoolManagementWhoseBanOption)
         }
 
-        // Which Map?
-        const whichMapTitle = document.createElement("div")
-        whichMapTitle.classList.add("sidebar-title")
-        whichMapTitle.innerText = "Which Map?"
+        mappoolManagementSystemEl.append(whoseBanTitle, mappoolManagementWhoseBanSelect)
 
-        const mappoolManagementWhichMapButtonContainer = document.createElement("div")
-        mappoolManagementWhichMapButtonContainer.setAttribute("id", "mappool-management-which-ban-button-container")
-        mappoolManagementWhichMapButtonContainer.classList.add("sidebar-mappool-management-button-container")
+        if (mappoolManagementAction === "setBan") {
+            // Which Map?
+            const whichMapTitle = document.createElement("div")
+            whichMapTitle.classList.add("sidebar-title")
+            whichMapTitle.innerText = "Which Map?"
 
-        for (let i = 0; i < allBeatmaps.length; i++) {
-            const mappoolManagementWhichMapButton = document.createElement("div")
-            mappoolManagementWhichMapButton.innerText = `${allBeatmaps[i].mod}${allBeatmaps[i].order}`
-            mappoolManagementWhichMapButton.addEventListener("click", mappoolManagementSetMap)
-            mappoolManagementWhichMapButton.dataset.id = allBeatmaps[i].beatmap_id
-            mappoolManagementWhichMapButtonContainer.append(mappoolManagementWhichMapButton)
+            const mappoolManagementWhichMapButtonContainer = document.createElement("div")
+            mappoolManagementWhichMapButtonContainer.setAttribute("id", "mappool-management-which-ban-button-container")
+            mappoolManagementWhichMapButtonContainer.classList.add("sidebar-mappool-management-button-container")
+
+            for (let i = 0; i < allBeatmaps.length; i++) {
+                const mappoolManagementWhichMapButton = document.createElement("div")
+                mappoolManagementWhichMapButton.innerText = `${allBeatmaps[i].mod}${allBeatmaps[i].order}`
+                mappoolManagementWhichMapButton.addEventListener("click", mappoolManagementSetMap)
+                mappoolManagementWhichMapButton.dataset.id = allBeatmaps[i].beatmap_id
+                mappoolManagementWhichMapButtonContainer.append(mappoolManagementWhichMapButton)
+            }
+
+            mappoolManagementSystemEl.append( whichMapTitle, mappoolManagementWhichMapButtonContainer)
         }
-
-        mappoolManagementSystemEl.append(whoseBanTitle, mappoolManagementWhoseBanSelect, whichMapTitle, mappoolManagementWhichMapButtonContainer)
     }
 
     // Apply Changes Button
@@ -494,6 +509,9 @@ function mappoolManagementSetAction() {
     switch (mappoolManagementAction) {
         case "setBan":
             applyChangesButton.addEventListener("click", mappoolManagementSetBan)
+            break
+        case "removeBan":
+            applyChangesButton.addEventListener("click", mappoolManagementRemoveBan)
             break
     }
     
@@ -522,6 +540,32 @@ function mappoolManagementSetMap() {
     this.style.backgroundColor = "#CECECE"
     this.style.color = "black"
     mappoolManagementSelectedMap = this.dataset.id
+}
+
+// Check ban count
+function mapCurrentlyBannedElsewhereCheck(previousMapId, banRequirement) {
+    let banCount = 0
+    for (let i = 0; i < leftTeamBanContainerEl.childElementCount; i++) {
+        if (leftTeamBanContainerEl.children[i].dataset.id === previousMapId) banCount++
+    }
+    for (let i = 0; i < rightTeamBanContainerEl.childElementCount; i++) {
+        if (rightTeamBanContainerEl.children[i].dataset.id === previousMapId) banCount++
+    }
+    if (banCount > banRequirement) return true
+    return false
+}
+
+// Check pick count
+function mapCurrentlyPickedElsewhereCheck(previousMapId, pickRequirement) {
+    let pickCount = 0
+    for (let i = 0; i < leftTeamPickContainerEl.childElementCount; i++) {
+        if (leftTeamPickContainerEl.children[i].dataset.id === previousMapId) pickCount++
+    }
+    for (let i = 0; i < rightTeamPickContainerEl.childElementCount; i++) {
+        if (rightTeamPickContainerEl.children[i].dataset.id === previousMapId) pickCount++
+    }
+    if (pickCount > pickRequirement) return true
+    return false
 }
 
 // Mappool Management Set Ban
@@ -563,26 +607,10 @@ function mappoolManagementSetBan() {
         const previousMapId = currentTile.dataset.id
 
         // Check if map is currently banned elsewhere
-        let mapCurrentlyBannedElsewhere = false
-        let banCount = 0
-        for (let i = 0; i < leftTeamBanContainerEl.childElementCount; i++) {
-            if (leftTeamBanContainerEl.children[i].dataset.id === previousMapId) banCount++
-        }
-        for (let i = 0; i < rightTeamBanContainerEl.childElementCount; i++) {
-            if (rightTeamBanContainerEl.children[i].dataset.id === previousMapId) banCount++
-        }
-        if (banCount > 1) mapCurrentlyBannedElsewhere = true
+        const mapCurrentlyBannedElsewhere = mapCurrentlyBannedElsewhereCheck(previousMapId, 1)
         
         // Check if map is currently picked elsewhere
-        let mapCurrentlyPickedElsewhere = false
-        let pickCount = 0
-        for (let i = 0; i < leftTeamPickContainerEl.childElementCount; i++) {
-            if (leftTeamPickContainerEl.children[i].dataset.id === previousMapId) pickCount++
-        }
-        for (let i = 0; i < rightTeamPickContainerEl.childElementCount; i++) {
-            if (rightTeamPickContainerEl.children[i].dataset.id === previousMapId) pickCount++
-        }
-        if (pickCount > 0) mapCurrentlyPickedElsewhere = true
+        const mapCurrentlyPickedElsewhere = mapCurrentlyPickedElsewhereCheck(previousMapId, 0)
 
         // Set attributes depending on the above
         const previousMapButton = document.getElementById(previousMapId)
@@ -594,4 +622,33 @@ function mappoolManagementSetBan() {
         currentTile.children[0].style.backgroundImage = `url("https://assets.ppy.sh/beatmaps/${currentMap.beatmapset_id}/covers/cover.jpg")`
         currentTile.children[1].innerText = `${currentMap.mod}${currentMap.order}`
     }
+}
+
+// Mappool Management Remove Ban
+function mappoolManagementRemoveBan() {
+    console.log(mappoolManagementSetWhoseBanTeam, mappoolManagementSetWhoseBanNumber)
+    if (mappoolManagementSetWhoseBanTeam === undefined || mappoolManagementSetWhoseBanNumber === undefined) return
+
+    // Find which container
+    const currentContainer = mappoolManagementSetWhoseBanTeam === "green"? leftTeamBanContainerEl : rightTeamBanContainerEl
+    if (!currentContainer) return
+
+    // Find which tile
+    const currentTile = currentContainer.children[mappoolManagementSetWhoseBanNumber]
+    const previousMapId = currentTile.dataset.id
+    if (!currentTile) return
+
+    // Check if map is currently banned elsewhere
+    const mapCurrentlyBannedElsewhere = mapCurrentlyBannedElsewhereCheck(previousMapId, 1)
+    
+    // Check if map is currently picked elsewhere
+    const mapCurrentlyPickedElsewhere = mapCurrentlyPickedElsewhereCheck(previousMapId, 0)
+
+    // Set attributes depending on the above
+    const previousMapButton = document.getElementById(previousMapId)
+    previousMapButton.dataset.banTeam = mapCurrentlyBannedElsewhere? "true" : "false"
+    previousMapButton.dataset.pickTeam = mapCurrentlyPickedElsewhere? "true" : "false"
+
+    // Remove tile
+    currentTile.remove()
 }
