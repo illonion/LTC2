@@ -91,7 +91,7 @@ const animation = {
     "leftScore": new CountUp(leftScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
     "rightScore": new CountUp(rightScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
     "leftCombo": new CountUp(leftComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
-    "rightCombo": new CountUp(leftComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
+    "rightCombo": new CountUp(rightComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
     "leftMiss": new CountUp(leftMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
     "rightMiss": new CountUp(rightMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"})
 }
@@ -101,7 +101,8 @@ const nowPlayingBackgroundImageEl = document.getElementById("now-playing-backgro
 const nowPlayingArtistTitleDifficultyEl = document.getElementById("now-playing-artist-title-difficulty")
 const nowPlayingStarRatingNumberEl = document.getElementById("now-playing-star-rating-number")
 const nowPlayingLengthNumberEl = document.getElementById("now-playing-length-number")
-let mapId, mapChecksum, findBeatmap = false, currentMap
+let mapId, mapChecksum, findBeatmap = false
+let currentMap
 
 // Now Playing Stats
 const nowPlayingStatsAr = document.getElementById("now-playing-stats-ar")
@@ -117,6 +118,9 @@ let checkResync = false
 const chatDisplayEl = document.getElementById("chat-display")
 const chatDisplayWrapperEl = document.getElementById("chat-display-wrapper")
 let chatLen
+
+// IPC State
+let ipcState
 
 // Websocket
 const socket = createTosuWsSocket()
@@ -223,23 +227,25 @@ socket.onmessage = event => {
         // Score Bar - Set who is winning
         let winning = ""
         if (currentLeftScore === currentRightScore) winning = "none"
-        else if ((currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore > currentRightScore) || currentRightScore > currentLeftScore) winning = "right"
-        else winning = "left"
+        else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore > currentRightScore) winning = "right"
+        else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore < currentRightScore) winning = "left"
+        else if (currentLeftScore > currentRightScore) winning = "left"
+        else if (currentRightScore > currentLeftscore) winning = "right"
 
         if (winning === "left") {
             leftScoreBarEl.style.width = `${barWidth}px`
             rightScoreBarEl.style.width = "0px"
-        } else if (winning === "none") {
+        } else if (winning === "right") {
             leftScoreBarEl.style.width = "0px"
             rightScoreBarEl.style.width = `${barWidth}px`
-        } else if (winning === "right") {
+        } else if (winning === "none") {
             leftScoreBarEl.style.width = "0px"
             rightScoreBarEl.style.width = "0px"
         }
     }
 
     // Now Playing Information
-    if (mapId !== data.beatmap.id || mapChecksum !== data.beatmap.checksum) {
+    if ((mapId !== data.beatmap.id || mapChecksum !== data.beatmap.checksum) && allBeatmaps) {
 
         audioElement.setAttribute("src", `http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapAudio)}`)
         changeAudioAndPlayFromPosition(`http://${location.host}/Songs/${encodeURIComponent(data.directPath.beatmapAudio)}`, data.beatmap.time.live)
@@ -262,7 +268,9 @@ socket.onmessage = event => {
             let currentHp = Math.round(Number(currentMap.diff_drain) * 10) / 10
             let currentOd = Math.round(Number(currentMap.diff_overall) * 10) / 10
             let currentBpm = Number(currentMap.bpm)
+            let currentLength = Number(currentMap.hit_length)
 
+            console.log(currentMap.mod)
             switch (currentMap.mod) {
                 case "HR":
                     currentCs = Math.min(Math.round(currentCs * 1.3 * 10) / 10, 10)
@@ -311,11 +319,16 @@ socket.onmessage = event => {
         syncAudioWithExternalTime(data.beatmap.time.live);
     }
 
+    // IPC State
+    if (ipcState !== data.tourney.ipcState) {
+        ipcState = data.tourney.ipcState
+    }
+
     // Check for DT
     // Get mods of player 1
     let player1Mods
     if (data.tourney.clients.length > 1) player1Mods = getMods(data.tourney.clients[0].play.mods.number)
-    if ((currentMap && currentMap.mod.includes("DT")) || (player1Mods && player1Mods.includes("DT"))) {
+    if (((currentMap && currentMap.mod.includes("DT")) || (player1Mods && player1Mods.includes("DT"))) && (ipcState === 2 || ipcState === 3)) {
         setPlaybackSpeed(1.5)
     } else {
         setPlaybackSpeed(1)

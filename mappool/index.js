@@ -3,7 +3,7 @@ const roundNameEl = document.getElementById("round-name")
 const sidebarMappoolContainerEl = document.getElementById("sidebar-mappool-container")
 const preloadImagesEl = document.getElementById("preload-images")
 let currentBestOf, currentFirstTo, currentLeftStars = 0, currentRightStars = 0
-let allBeatmaps
+let allBeatmaps, currentMap
 /**
  * Get all beatmaps from the beatmaps.json file
  * Set the round name
@@ -97,7 +97,7 @@ const rightTeamBanContainerEl = document.getElementById("right-team-ban-containe
 // Team Pick Container
 const leftTeamPickContainerEl = document.getElementById("left-team-pick-container")
 const rightTeamPickContainerEl = document.getElementById("right-team-pick-container")
-let currentPickTile
+let currentPickTile, currentPickMap
 // Map Click Event
 function mapClickEvent(event) {
     // Find map
@@ -148,6 +148,7 @@ function mapClickEvent(event) {
         currentTile.children[3].innerText = `${currentMap.mod}${currentMap.order}`
 
         document.cookie = `currentPicker=${team}; path=/`
+        currentPickMap = currentMap
 
         this.dataset.pickTeam = "true"
     }
@@ -336,12 +337,12 @@ socket.onmessage = event => {
 
             if (!isStarOn) return
             let winner = ""
-            if (currentMap.mod === "EX" && currentMap.score_method === "combo") {
+            if (currentPickMap && currentPickMap.mod === "EX" && currentPickMap.score_method === "combo") {
                 if (currentLeftScore > currentRightScore) winner = "red"
                 else if (currentLeftScore < currentRightScore) winner = "blue"
                 else if (currentLeftSecondaryScore > currentRightSecondaryScore) winner = "red"
                 else if (currentLeftSecondaryScore < currentRightSecondaryScore) winner = "blue"
-            } else if (currentMap.mod === "EX" && currentMap.score_method === "miss") {
+            } else if (currentPickMap && currentPickMap.mod === "EX" && currentPickMap.score_method === "miss") {
                 if (currentLeftScore < currentRightScore) winner = "red"
                 else if (currentLeftScore > currentRightScore) winner = "blue"
                 else if (currentLeftSecondaryScore > currentRightSecondaryScore) winner = "red"
@@ -355,25 +356,10 @@ socket.onmessage = event => {
             updateStarCount(winner, "plus")
 
             // Set winner on tile
-            if (!currentMap) return
-            currentMap.children[1].classList.add(`${winner === "red"? "green" : "blue"}-team-pick-outline`)
-            currentMap.children[1].classList.remove(`${winner === "red"? "blue" : "green"}-team-pick-outline`)
-            currentMap.children[2].setAttribute("src", `${winner === "red"? "green" : "blue"} crown.png`)
-
-            const teamPickWrapper = document.createElement("div")
-            teamPickWrapper.classList.add("team-pick-wrapper")
-            
-            const teamPickBackgroundImage = document.createElement("div")
-            teamPickBackgroundImage.classList.add("team-pick-background-image")
-    
-            const teamPickOutline = document.createElement("div")
-            teamPickOutline.classList.add("team-pick-outline")
-    
-            const teamPickWinnerCrown = document.createElement("img")
-            teamPickWinnerCrown.classList.add("team-pick-winner-crown")
-    
-            const teamPickModId = document.createElement("div")
-            teamPickModId.classList.add("team-pick-mod-id")
+            if (!currentPickTile) return
+            currentPickTile.children[1].classList.add(`${winner === "red"? "left" : "right"}-team-pick-outline`)
+            currentPickTile.children[1].classList.remove(`${winner === "red"? "right" : "left"}-team-pick-outline`)
+            currentPickTile.children[2].setAttribute("src", `static/${winner === "red"? "green" : "blue"} crown.png`)
         }
     }
 }

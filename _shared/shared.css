@@ -79,4 +79,4 @@ video {
 .unknown { color: yellow; }
 .bot { color: pink; }
 .left { color: var(--green); }
-.right { color: var(#b9ddff); }
+.right { color: #b9ddff; }
