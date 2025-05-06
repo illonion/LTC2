@@ -87,13 +87,17 @@ const leftComboScoreEl = document.getElementById("left-combo-score")
 const rightComboScoreEl = document.getElementById("right-combo-score")
 const leftMissScoreEl = document.getElementById("left-miss-score")
 const rightMissScoreEl = document.getElementById("right-miss-score")
+const leftAccScoreEl = document.getElementById("left-acc-score")
+const rightAccScoreEl = document.getElementById("right-acc-score")
 const animation = {
     "leftScore": new CountUp(leftScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
     "rightScore": new CountUp(rightScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." }),
     "leftCombo": new CountUp(leftComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
     "rightCombo": new CountUp(rightComboScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
     "leftMiss": new CountUp(leftMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
-    "rightMiss": new CountUp(rightMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"})
+    "rightMiss": new CountUp(rightMissScoreEl, 0, 0, 0, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "x"}),
+    "leftAcc": new CountUp(leftAccScoreEl, 0, 0, 2, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "%"}),
+    "rightAcc": new CountUp(rightAccScoreEl, 0, 0, 2, 0.2, { useEasing: true, useGrouping: true, separator: ",", decimal: "." , suffix: "%"})
 }
 
 // Now Playing Information
@@ -163,9 +167,17 @@ socket.onmessage = event => {
                 data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.combo.max : currentRightScore += currentPlayerPlay.combo.max
             } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
                 data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.hits["0"] : currentRightScore += currentPlayerPlay.hits["0"]
+            } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "acc") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.accuracy : currentRightScore += currentPlayerPlay.accuracy
             } else {
                 data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.score : currentRightScore += currentPlayerPlay.score
             }
+        }
+
+        // Reduce accuracy
+        if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "acc") {
+            currentLeftScore /= 2
+            currentRightScore /= 2
         }
 
         // Set displays
@@ -179,12 +191,16 @@ socket.onmessage = event => {
             rightComboScoreEl.style.opacity = 1
             leftMissScoreEl.style.opacity = 0
             rightMissScoreEl.style.opacity = 0
+            leftAccScoreEl.style.opacity = 0
+            rightAccScoreEl.style.opacity = 0
             animation.leftScore.update(0)
             animation.rightScore.update(0)
             animation.leftCombo.update(currentLeftScore)
             animation.rightCombo.update(currentRightScore)
             animation.leftMiss.update(0)
             animation.rightMiss.update(0)
+            animation.leftAcc.update(0)
+            animation.rightAcc.update(0)
 
             // Bar Width
             barWidth = Math.min(currentScoreDelta / 50 * 898, 898)
@@ -196,15 +212,40 @@ socket.onmessage = event => {
             rightComboScoreEl.style.opacity = 0
             leftMissScoreEl.style.opacity = 1
             rightMissScoreEl.style.opacity = 1
+            leftAccScoreEl.style.opacity = 0
+            rightAccScoreEl.style.opacity = 0
             animation.leftScore.update(0)
             animation.rightScore.update(0)
             animation.leftCombo.update(0)
             animation.rightCombo.update(0)
             animation.leftMiss.update(currentLeftScore)
             animation.rightMiss.update(currentRightScore)
+            animation.leftAcc.update(0)
+            animation.rightAcc.update(0)
 
             // Bar Width
             barWidth = Math.min(currentScoreDelta / 20 * 898, 898)
+        } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "acc") {
+            // Set Display
+            leftScoreEl.style.opacity = 0
+            rightScoreEl.style.opacity = 0
+            leftComboScoreEl.style.opacity = 0
+            rightComboScoreEl.style.opacity = 0
+            leftMissScoreEl.style.opacity = 0
+            rightMissScoreEl.style.opacity = 0
+            leftAccScoreEl.style.opacity = 1
+            rightAccScoreEl.style.opacity = 1
+            animation.leftScore.update(0)
+            animation.rightScore.update(0)
+            animation.leftCombo.update(0)
+            animation.rightCombo.update(0)
+            animation.leftMiss.update(0)
+            animation.rightMiss.update(0)
+            animation.leftAcc.update(currentLeftScore)
+            animation.rightAcc.update(currentRightScore)
+
+            // Bar Width
+            barWidth = Math.min(currentScoreDelta / 10 * 898, 898)
         } else {
             // Set Display
             leftScoreEl.style.opacity = 1
@@ -213,12 +254,16 @@ socket.onmessage = event => {
             rightComboScoreEl.style.opacity = 0
             leftMissScoreEl.style.opacity = 0
             rightMissScoreEl.style.opacity = 0
+            leftAccScoreEl.style.opacity = 0
+            rightAccScoreEl.style.opacity = 0
             animation.leftScore.update(currentLeftScore)
             animation.rightScore.update(currentRightScore)
             animation.leftCombo.update(0)
             animation.rightCombo.update(0)
             animation.leftMiss.update(0)
             animation.rightMiss.update(0)
+            animation.leftAcc.update(0)
+            animation.rightAcc.update(0)
 
             // Bar Width
             barWidth = Math.min(Math.pow(currentScoreDelta / 500000, 0.5) * 898, 898)
