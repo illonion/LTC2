@@ -322,6 +322,9 @@ socket.onmessage = event => {
             } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
                 data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.hits["0"] : currentRightScore += currentPlayerPlay.hits["0"]
                 data.tourney.clients[i].team === "left"? currentLeftSecondaryScore += currentPlayerPlay.score : currentRightSecondaryScore += currentPlayerPlay.score
+            } else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss") {
+                data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.accuracy : currentRightScore += currentPlayerPlay.accuracy
+                data.tourney.clients[i].team === "left"? currentLeftSecondaryScore += currentPlayerPlay.score : currentRightSecondaryScore += currentPlayerPlay.score
             } else {
                 data.tourney.clients[i].team === "left"? currentLeftScore += currentPlayerPlay.score : currentRightScore += currentPlayerPlay.score
             }
@@ -337,7 +340,7 @@ socket.onmessage = event => {
 
             if (!isStarOn) return
             let winner = ""
-            if (currentPickMap && currentPickMap.mod === "EX" && currentPickMap.score_method === "combo") {
+            if (currentPickMap && currentPickMap.mod === "EX" && (currentPickMap.score_method === "combo" || currentPickMap.score_method === "acc")) {
                 if (currentLeftScore > currentRightScore) winner = "red"
                 else if (currentLeftScore < currentRightScore) winner = "blue"
                 else if (currentLeftSecondaryScore > currentRightSecondaryScore) winner = "red"
