@@ -1,0 +1,21 @@
+.main {
+    background-image: url("static/background.png");
+    color: white;
+}
+
+.team-name {
+    position: absolute;
+    top: 352px;
+    left: 886px;
+    font-size: 60px;
+}
+
+.player-names {
+    position: absolute;
+    top: 554px;
+    left: 886px;
+    font-size: 48px;
+}
+.player-name {
+    margin: -1px;
+}
