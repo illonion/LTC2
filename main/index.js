@@ -275,7 +275,7 @@ socket.onmessage = event => {
         else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore > currentRightScore) winning = "right"
         else if (currentMap && currentMap.mod === "EX" && currentMap.score_method === "miss" && currentLeftScore < currentRightScore) winning = "left"
         else if (currentLeftScore > currentRightScore) winning = "left"
-        else if (currentRightScore > currentLeftscore) winning = "right"
+        else if (currentRightScore > currentLeftScore) winning = "right"
 
         if (winning === "left") {
             leftScoreBarEl.style.width = `${barWidth}px`

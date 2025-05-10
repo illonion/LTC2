@@ -16,6 +16,8 @@ setInterval(() => {
     const currentWinningTeam = getCookie("currentWinningTeam")
     const currentWinningColour = getCookie("currentWinningColour")
 
+    console.log(currentWinningTeam, currentWinningColour)
+
     if (currentWinningTeam !== previousWinningTeam && allTeams) {
         if (previousWinningTeam === "none") {
             teamNameEl.style.display = "none"
@@ -44,8 +46,12 @@ setInterval(() => {
         previousWinningColour = currentWinningColour
         if (previousWinningColour === "blue") {
             videoBackgroundEl.setAttribute("src", "static/bluewin-bg.webm")
+            videoBackgroundEl.load()
+            videoBackgroundEl.play()
         } else {
             videoBackgroundEl.setAttribute("src", "static/greenwin-bg.webm")
+            videoBackgroundEl.load()
+            videoBackgroundEl.play()
         }
     }
 }, 200)
