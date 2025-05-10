@@ -8,10 +8,11 @@ function submit() {
     allTeams = []
     
     for (let i = 0; i < textareaSplitLine.length; i++) {
+        if (/^[^,\s]+$/.test(textareaSplitLine[i])) continue
         const textareaSplitCommas = textareaSplitLine[i].split(",")
         const team = {
             "team_name": textareaSplitCommas[0],
-            "team_players": [textareaSplitCommas[1], textareaSplitCommas[2], textareaSplitCommas[3], textareaSplitCommas[4]]
+            "team_players": [textareaSplitCommas[1], textareaSplitCommas[2], textareaSplitCommas[3]]
         }
         allTeams.push(team)
     }

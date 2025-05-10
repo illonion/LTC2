@@ -211,6 +211,17 @@ function updateStarCount(team, action) {
 
     document.cookie = `currentLeftStars=${currentLeftStars}; path=/`
     document.cookie = `currentRightStars=${currentRightStars}; path=/`
+
+    if (currentLeftStars > currentRightStars) {
+        document.cookie=`currentWinningTeam=${leftTeamName}; path=/`
+        document.cookie=`currentWinningColour=red; path=/`
+    } else if (currentLeftStars < currentRightStars) {
+        document.cookie=`currentWinningTeam=${rightTeamName}; path=/`
+        document.cookie=`currentWinningColour=blue; path=/`
+    } else {
+        document.cookie=`currentWinningTeam=none; path=/`
+        document.cookie=`currentWinningColour=none; path=/`
+    }
 }
 
 // Team Names

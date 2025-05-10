@@ -57,7 +57,7 @@
     position: absolute;
     top: 22px;
     left: 167px;
-    width: 456px;
+    width: 400px;
     font-size: 70px;
     line-height: 72px;
     color: #ffffff;
@@ -260,7 +260,7 @@
 }
 .sidebar-button-container button {
     width: 100px;
-    height: 50px;
+    height: 46px;
     font-family: inherit;
     font-weight: 700;
     background-color: transparent;

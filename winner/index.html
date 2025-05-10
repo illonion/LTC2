@@ -10,17 +10,20 @@
 </head>
 <body>
     <video autoplay loop muted>
-        <source src="static/greenwin-bg.webm">
+        <source src="static/greenwin-bg.webm" id="video-background">
     </video>
 
     <div class="main">
-        <div class="team-name">Team Name Here</div>
-        <div class="player-names" id="player-name">
+        <div class="team-name" id="team-name">Team Name Here</div>
+        <div class="player-names" id="player-names">
             <div class="player-name">Player Name</div>
             <div class="player-name">Player Name</div>
             <div class="player-name">Player Name</div>
             <div class="player-name">Player Name</div>
         </div>
     </div>
+
+    <script src="../_shared/utils.js"></script>
+    <script src="index.js"></script>
 </body>
 </html>
