@@ -16,12 +16,11 @@ setInterval(() => {
     const currentWinningTeam = getCookie("currentWinningTeam")
     const currentWinningColour = getCookie("currentWinningColour")
 
-    console.log(currentWinningTeam, currentWinningColour)
-
     if (currentWinningTeam !== previousWinningTeam && allTeams) {
-        if (previousWinningTeam === "none") {
+        if (currentWinningTeam === "none") {
             teamNameEl.style.display = "none"
             playerNamesEl.style.display = "none"
+            previousWinningTeam = currentWinningTeam
             return
         }
 
