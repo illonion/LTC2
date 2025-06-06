@@ -243,7 +243,7 @@
     margin-bottom: 10px;
     color: white;
     font-weight: 700;
-    font-size: 32px;
+    font-size: 1.25rem;
 }
 .sidebar-text {
     width: inherit;
@@ -260,7 +260,7 @@
 }
 .sidebar-button-container button {
     width: 100px;
-    height: 46px;
+    height: 43px;
     font-family: inherit;
     font-weight: 700;
     background-color: transparent;
